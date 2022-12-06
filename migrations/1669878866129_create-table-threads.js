@@ -13,13 +13,12 @@ exports.up = pgm => {
             type: 'TEXT',
             notNull: true
         },
-        userId: {
+        user_id: {
             type: 'VARCHAR(50)',
-            references: 'users',
             notNull: true,
-            referencesConstraintName: 'user_thread'
         }
     })
+    pgm.addConstraint('threads', 'fk_threads.user_id.users.id', 'FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE');
 };
 
 exports.down = pgm => {

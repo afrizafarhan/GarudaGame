@@ -16,7 +16,7 @@ describe('a RecordedThread entites', () => {
             title: 1234,
             owner: {}
         }
-        expect(() => new RecordedThread(payload)).toThrowError('RECORDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY')
+        expect(() => new RecordedThread(payload)).toThrowError('RECORDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION')
     });
 
     it('should create recordedThread object correctly', () => {

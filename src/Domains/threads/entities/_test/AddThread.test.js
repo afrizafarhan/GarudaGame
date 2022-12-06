@@ -12,7 +12,8 @@ describe('AddThread Entities', () => {
     it('should throw error when payload dit not meed data type specification', () => {
         const payload = {
             title: true,
-            body: 123
+            body: 123,
+            userId: 123,
         }
 
         expect(() => new AddThread(payload)).toThrowError('ADD_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
@@ -21,7 +22,8 @@ describe('AddThread Entities', () => {
     it('should create addThread object correctly', () => {
         const payload = {
             title: 'abc',
-            body: 'abc'
+            body: 'abc',
+            userId: 'user-123'
         }
 
         const { title, body } = new AddThread(payload);
