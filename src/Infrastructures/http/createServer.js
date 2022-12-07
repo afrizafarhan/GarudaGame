@@ -14,9 +14,9 @@ const createServer = async (container) => {
 
   await server.register([
     {
-      plugin: Jwt
-    }
-  ])
+      plugin: Jwt,
+    },
+  ]);
 
   server.auth.strategy('jwt_garuda_game', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
@@ -29,10 +29,10 @@ const createServer = async (container) => {
     validate: (artifacts) => ({
       isValid: true,
       credentials: {
-        id: artifacts.decoded.payload.id
-      }
-    })
-  })
+        id: artifacts.decoded.payload.id,
+      },
+    }),
+  });
 
   await server.register([
     {
@@ -45,8 +45,8 @@ const createServer = async (container) => {
     },
     {
       plugin: thread,
-      options: { container }
-    }
+      options: { container },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {

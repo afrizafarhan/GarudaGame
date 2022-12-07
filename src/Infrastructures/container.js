@@ -84,14 +84,14 @@ container.register([
     parameter: {
       dependencies: [
         {
-          concrete: pool
+          concrete: pool,
         },
         {
-          concrete: nanoid
+          concrete: nanoid,
         },
-      ]
-    }
-  }
+      ],
+    },
+  },
 ]);
 
 // registering use cases
@@ -177,10 +177,10 @@ container.register([
         {
           name: 'threadRepository',
           internal: ThreadRepository.name,
-        }
-      ]
-    }
-  }
+        },
+      ],
+    },
+  },
 ]);
 
 module.exports = container;
