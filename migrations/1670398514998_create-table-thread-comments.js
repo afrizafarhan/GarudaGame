@@ -17,6 +17,20 @@ exports.up = (pgm) => {
       type: 'VARCHAR(50)',
       notNull: true,
     },
+    is_delete: {
+      type: 'BOOLEAN',
+      default: false,
+    },
+    created_at: {
+      type: 'TIMESTAMP',
+      notNull: true,
+      default: pgm.func('current_timestamp'),
+    },
+    updated_at: {
+      type: 'TIMESTAMP',
+      notNull: true,
+      default: pgm.func('current_timestamp'),
+    },
   });
   pgm.addConstraint(
     'thread_comments',

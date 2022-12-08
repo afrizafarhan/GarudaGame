@@ -62,4 +62,14 @@ describe('ThreadRepositoryPostgres', () => {
       expect(threadComments[0].user_id).toEqual(addThreadComment.userId);
     });
   });
+
+  describe('getThreadById function', () => {
+    it('should return thread correctly', async () => {
+      const userId = await UsersTableTestHelper.findUsersById('user-123');
+      await ThreadTableTestHelper.addThread({ userId: userId[0].id });
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+      const data = await threadRepositoryPostgres.getThreadById('thread-123');
+      expect(data.rowCount).toEqual(1);
+    });
+  });
 });

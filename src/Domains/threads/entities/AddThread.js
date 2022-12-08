@@ -1,6 +1,6 @@
 class AddThread {
   constructor(payload) {
-    this._verifyPayload(payload);
+    this.verifyPayload(payload);
     const { title, body, userId } = payload;
 
     this.title = title;
@@ -8,7 +8,7 @@ class AddThread {
     this.userId = userId;
   }
 
-  _verifyPayload(payload) {
+  verifyPayload(payload) {
     if (!payload.title || !payload.body || !payload.userId) {
       throw new Error('ADD_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }

@@ -1,4 +1,3 @@
-const { server } = require('@hapi/hapi');
 const routes = require('./routes');
 const ThreadsHandler = require('./handler');
 

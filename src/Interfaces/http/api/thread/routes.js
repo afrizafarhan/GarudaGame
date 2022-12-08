@@ -7,6 +7,14 @@ const routes = (handler) => ([
       auth: 'jwt_garuda_game',
     },
   },
+  {
+    method: 'POST',
+    path: '/threads/{threadId}/comments',
+    handler: handler.postThreadCommentHandler,
+    options: {
+      auth: 'jwt_garuda_game',
+    },
+  },
 ]);
 
 module.exports = routes;
