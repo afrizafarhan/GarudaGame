@@ -46,6 +46,22 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
     return this.pool.query(query);
   }
+
+  async getThreadCommentById(commentId) {
+    const query = {
+      text: 'SELECT * FROM thread_comments WHERE id = $1',
+      values: [commentId],
+    };
+    return this.pool.query(query);
+  }
+
+  async deleteThreadCommentById(commentId) {
+    const query = {
+      text: 'UPDATE thread_comments SET is_delete = true WHERE id = $1 RETURNING id',
+      values: [commentId],
+    };
+    return this.pool.query(query);
+  }
 }
 
 module.exports = ThreadRepositoryPostgres;

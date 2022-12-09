@@ -16,6 +16,8 @@ describe('ThreadRepositoryPostgres', () => {
     await ThreadCommentsTableTestHelper.cleanTable();
   });
   afterAll(async () => {
+    await ThreadCommentsTableTestHelper.cleanTable();
+    await ThreadTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
     await pool.end();
   });
@@ -69,6 +71,34 @@ describe('ThreadRepositoryPostgres', () => {
       await ThreadTableTestHelper.addThread({ userId: userId[0].id });
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
       const data = await threadRepositoryPostgres.getThreadById('thread-123');
+      expect(data.rowCount).toEqual(1);
+    });
+  });
+
+  describe('deleteThreadCommentById function', () => {
+    it('should persist delete thread correctly', async () => {
+      const user = await UsersTableTestHelper.findUsersById('user-123');
+      await UsersTableTestHelper.addUser({
+        id: 'user-124',
+        username: 'dicoding 123',
+      });
+      const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      await ThreadTableTestHelper.addThread({ userId: user[0].id });
+      await ThreadCommentsTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id });
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+      const data = await threadRepositoryPostgres.getThreadCommentById('comment-123');
+      expect(data.rowCount).toEqual(1);
+    });
+  });
+
+  describe('deleteThreadCommentById function', () => {
+    it('should persist delete thread correctly', async () => {
+      const user = await UsersTableTestHelper.findUsersById('user-123');
+      const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      await ThreadTableTestHelper.addThread({ userId: user[0].id });
+      await ThreadCommentsTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id });
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+      const data = await threadRepositoryPostgres.deleteThreadCommentById('comment-123');
       expect(data.rowCount).toEqual(1);
     });
   });

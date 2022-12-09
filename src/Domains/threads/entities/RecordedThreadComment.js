@@ -7,6 +7,11 @@ class RecordedCommentThread {
     this.owner = owner;
   }
 
+  /**
+   * This function will verify the payload
+   *
+   * @param {object} payload
+   */
   verifyPayload(payload) {
     if (!payload.id || !payload.content || !payload.owner) {
       throw new Error('RECORDED_THREAD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');

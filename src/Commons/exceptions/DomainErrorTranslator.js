@@ -1,3 +1,4 @@
+const AuthorizationError = require('./AuthorizationError');
 const InvariantError = require('./InvariantError');
 const NotFoundError = require('./NotFoundError');
 
@@ -23,6 +24,8 @@ DomainErrorTranslator.directories = {
   'GET_THREAD.NO_THREAD_FOUND': new NotFoundError('thread tidak ditemukan'),
   'ADD_THREAD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat komentar pada thread dikarenakan properti yang dibutuhkan tidak ada'),
   'ADD_THREAD_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('content harus string'),
+  'GET_THREAD_COMMENT.NOT_THREAD_COMMENT_FOUND': new NotFoundError('komen atau thread tidak ditemukan'),
+  'DELETE_THREAD_COMMENT.ACCESS_FORBIDEN': new AuthorizationError('kamu tidak punya akses untuk menghapus komentar ini'),
 };
 
 module.exports = DomainErrorTranslator;

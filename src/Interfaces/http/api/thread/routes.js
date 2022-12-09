@@ -15,6 +15,14 @@ const routes = (handler) => ([
       auth: 'jwt_garuda_game',
     },
   },
+  {
+    method: 'DELETE',
+    path: '/threads/{threadId}/comments/{commentId}',
+    handler: handler.deleteThreadCommentHandler,
+    options: {
+      auth: 'jwt_garuda_game',
+    },
+  },
 ]);
 
 module.exports = routes;
