@@ -12,7 +12,13 @@ class GetThreadUseCase {
     }
     let comments;
     if (withComment) {
-      comments = (await this.threadRepository.getThreadCommentsByThreadId(threadId)).rows;
+      comments = (await this.threadRepository.getThreadCommentsByThreadId(threadId))
+        .rows.map((val) => ({
+          id: val.id,
+          username: val.username,
+          date: val.date,
+          content: val.is_delete ? '**komentar telah dihapus**' : val.content,
+        }));
     }
     const {
       id,

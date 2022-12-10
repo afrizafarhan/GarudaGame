@@ -57,7 +57,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
   async getThreadCommentsByThreadId(threadId) {
     const query = {
-      text: 'SELECT tc.id, content, tc.created_at as date, username FROM thread_comments tc JOIN users u ON u.id = tc.user_id WHERE tc.thread_id = $1',
+      text: 'SELECT tc.id, content, tc.created_at as date, username, is_delete FROM thread_comments tc JOIN users u ON u.id = tc.user_id WHERE tc.thread_id = $1 ORDER BY created_at ASC',
       values: [threadId],
     };
     return this.pool.query(query);
