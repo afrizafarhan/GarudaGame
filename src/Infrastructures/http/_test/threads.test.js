@@ -373,4 +373,33 @@ describe('/threads endpoint', () => {
       expect(responseJson.status).toEqual('success');
     });
   });
+
+  describe('when GET /threads/{threadId}', () => {
+    it('should response 404 where thread not found', async () => {
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-125',
+      });
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('thread tidak ditemukan');
+    });
+    it('should response 200', async () => {
+      const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      await ThreadTableTestHelper.addThread({ userId: userData.addedUser.id });
+      await ThreadCommentTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id, threadId: 'thread-123' });
+      const server = await createServer(container);
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-123',
+      });
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(typeof responseJson.data).toEqual('object');
+      expect(typeof responseJson.data.thread).toEqual('object');
+    });
+  });
 });

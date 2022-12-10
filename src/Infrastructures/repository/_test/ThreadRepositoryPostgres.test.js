@@ -102,4 +102,16 @@ describe('ThreadRepositoryPostgres', () => {
       expect(data.rowCount).toEqual(1);
     });
   });
+
+  describe('getThreadCommentsByThreadId', () => {
+    it('should persist comment thread correctly', async () => {
+      const user = await UsersTableTestHelper.findUsersById('user-123');
+      const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      await ThreadTableTestHelper.addThread({ userId: user[0].id });
+      await ThreadCommentsTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id, threadId: 'thread-123' });
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+      const data = await threadRepositoryPostgres.getThreadCommentsByThreadId('thread-123');
+      expect(data.rowCount).toEqual(1);
+    });
+  });
 });

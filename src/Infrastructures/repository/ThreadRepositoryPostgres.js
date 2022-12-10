@@ -40,7 +40,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
   async getThreadById(threadId) {
     const query = {
-      text: 'SELECT * FROM threads WHERE id = $1',
+      text: 'SELECT t.id, t.title, t.body, t.created_at, t.user_id, u.username FROM threads t INNER JOIN users u ON u.id = t.user_id WHERE t.id = $1',
       values: [threadId],
     };
 
@@ -51,6 +51,14 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const query = {
       text: 'SELECT * FROM thread_comments WHERE id = $1',
       values: [commentId],
+    };
+    return this.pool.query(query);
+  }
+
+  async getThreadCommentsByThreadId(threadId) {
+    const query = {
+      text: 'SELECT tc.id, content, tc.created_at as date, username FROM thread_comments tc JOIN users u ON u.id = tc.user_id WHERE tc.thread_id = $1',
+      values: [threadId],
     };
     return this.pool.query(query);
   }

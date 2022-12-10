@@ -8,5 +8,6 @@ describe('Thread Repository Interface', () => {
     await expect(threadRepository.addThreadComment({})).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(threadRepository.deleteThreadCommentById({})).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(threadRepository.getThreadCommentById({})).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(threadRepository.getThreadCommentsByThreadId({})).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

@@ -2,6 +2,7 @@ const ThreadUseCase = require('../../../../Applications/use_case/AddThreadUseCas
 const AddThreadCommentUseCase = require('../../../../Applications/use_case/AddThreadCommentUseCase');
 const GetThreadUseCase = require('../../../../Applications/use_case/GetThreadUseCase');
 const DeleteThreadCommentUseCase = require('../../../../Applications/use_case/DeleteThreadCommentUseCase');
+const { response } = require('@hapi/hapi/lib/validation');
 
 class ThreadsHandler {
   constructor(container) {
@@ -9,6 +10,7 @@ class ThreadsHandler {
     this.postThreadHandler = this.postThreadHandler.bind(this);
     this.postThreadCommentHandler = this.postThreadCommentHandler.bind(this);
     this.deleteThreadCommentHandler = this.deleteThreadCommentHandler.bind(this);
+    this.getThreadByIdHandler = this.getThreadByIdHandler.bind(this);
   }
 
   async postThreadHandler(request, h) {
@@ -68,6 +70,18 @@ class ThreadsHandler {
     await deleteThreadComment.execute(payload);
     return h.response({
       status: 'success',
+    });
+  }
+
+  async getThreadByIdHandler(request, h) {
+    const getThread = this.container.getInstance(GetThreadUseCase.name);
+    const { threadId } = request.params;
+    const data = await getThread.execute(threadId, true);
+    return h.response({
+      status: 'success',
+      data: {
+        thread: data,
+      },
     });
   }
 }
