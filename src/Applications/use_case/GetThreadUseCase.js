@@ -1,8 +1,9 @@
 const DetailThread = require('../../Domains/threads/entities/DetailThread');
 
 class GetThreadUseCase {
-  constructor({ threadRepository }) {
+  constructor({ threadRepository, commentRepository }) {
     this.threadRepository = threadRepository;
+    this.commentRepository = commentRepository;
   }
 
   async execute(threadId, withComment = false) {
@@ -12,7 +13,7 @@ class GetThreadUseCase {
     }
     let comments;
     if (withComment) {
-      comments = (await this.threadRepository.getThreadCommentsByThreadId(threadId))
+      comments = (await this.commentRepository.getCommentByThreadId(threadId))
         .rows.map((val) => ({
           id: val.id,
           username: val.username,

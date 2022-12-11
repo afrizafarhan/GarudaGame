@@ -312,7 +312,7 @@ describe('/threads endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(404);
       expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('komen atau thread tidak ditemukan');
+      expect(responseJson.message).toEqual('thread tidak ditemukan');
     });
     it('should response 403', async () => {
       await ThreadTableTestHelper.addThread({

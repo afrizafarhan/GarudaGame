@@ -1,7 +1,7 @@
 const GetThreadUseCase = require('../GetThreadUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const DetailThread = require('../../../Domains/threads/entities/DetailThread');
-const DetailThreadComment = require('../../../Domains/threads/entities/DetailThreadComment');
+const CommentRepository = require('../../../Domains/comments/CommentRepository');
 
 describe('GetThreadUseCase', () => {
   it('should throw error when thread not found', async () => {
@@ -51,6 +51,7 @@ describe('GetThreadUseCase', () => {
 
   it('should orchestrating the get thread with comments action correctly', async () => {
     const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
     const expectedCommentResult = {
       id: 'comment-123',
       content: 'dicoding',
@@ -82,7 +83,7 @@ describe('GetThreadUseCase', () => {
           },
         ],
       }));
-    mockThreadRepository.getThreadCommentsByThreadId = jest.fn()
+    mockCommentRepository.getCommentByThreadId = jest.fn()
       .mockImplementation(() => Promise.resolve({
         rowCount: 1,
         rows: [
@@ -96,14 +97,16 @@ describe('GetThreadUseCase', () => {
       }));
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
     });
     const getThread = await getThreadUseCase.execute('thread-123', true);
     expect(getThread).toStrictEqual(expectedResult);
     expect(mockThreadRepository.getThreadById).toBeCalledWith('thread-123');
-    expect(mockThreadRepository.getThreadCommentsByThreadId).toBeCalledWith('thread-123');
+    expect(mockCommentRepository.getCommentByThreadId).toBeCalledWith('thread-123');
   });
   it('should orchestrating the get thread with deleted comments action correctly', async () => {
     const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
     const expectedCommentResult = {
       id: 'comment-123',
       content: '**komentar telah dihapus**',
@@ -135,7 +138,7 @@ describe('GetThreadUseCase', () => {
           },
         ],
       }));
-    mockThreadRepository.getThreadCommentsByThreadId = jest.fn()
+    mockCommentRepository.getCommentByThreadId = jest.fn()
       .mockImplementation(() => Promise.resolve({
         rowCount: 1,
         rows: [
@@ -150,10 +153,11 @@ describe('GetThreadUseCase', () => {
       }));
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
     });
     const getThread = await getThreadUseCase.execute('thread-123', true);
     expect(getThread).toStrictEqual(expectedResult);
     expect(mockThreadRepository.getThreadById).toBeCalledWith('thread-123');
-    expect(mockThreadRepository.getThreadCommentsByThreadId).toBeCalledWith('thread-123');
+    expect(mockCommentRepository.getCommentByThreadId).toBeCalledWith('thread-123');
   });
 });

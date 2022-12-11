@@ -2,7 +2,6 @@ const ThreadUseCase = require('../../../../Applications/use_case/AddThreadUseCas
 const AddThreadCommentUseCase = require('../../../../Applications/use_case/AddThreadCommentUseCase');
 const GetThreadUseCase = require('../../../../Applications/use_case/GetThreadUseCase');
 const DeleteThreadCommentUseCase = require('../../../../Applications/use_case/DeleteThreadCommentUseCase');
-const { response } = require('@hapi/hapi/lib/validation');
 
 class ThreadsHandler {
   constructor(container) {
@@ -37,11 +36,8 @@ class ThreadsHandler {
 
   async postThreadCommentHandler(request, h) {
     const threadCommentUseCase = this.container.getInstance(AddThreadCommentUseCase.name);
-    const getThread = this.container.getInstance(GetThreadUseCase.name);
-    const { threadId } = request.params;
-    await getThread.execute(threadId);
     const data = {
-      threadId,
+      threadId: request.params.threadId,
       content: request.payload.content,
       userId: request.auth.credentials.id,
     };

@@ -1,19 +1,24 @@
 class DeleteThreadCommentUseCase {
-  constructor({ threadRepository }) {
+  constructor({ threadRepository, commentRepository }) {
     this.threadRepository = threadRepository;
+    this.commentRepository = commentRepository;
   }
 
   async execute({ commentId, userId, threadId }) {
-    const { rowCount, rows: data } = await this.threadRepository
-      .getThreadCommentById(commentId, threadId);
+    const { rowCount: thread } = await this.threadRepository.getThreadById(threadId);
+    if (!thread) {
+      throw new Error('GET_THREAD.NO_THREAD_FOUND');
+    }
+    const { rowCount, rows: data } = await this.commentRepository
+      .getCommentByIdAndThreadId(commentId, threadId);
     if (!rowCount) {
-      throw new Error('GET_THREAD_COMMENT.NOT_THREAD_COMMENT_FOUND');
+      throw new Error('GET_THREAD_COMMENT.NO_THREAD_COMMENT_FOUND');
     }
     const { id, user_id: userIdThread } = data[0];
     if (userId !== userIdThread) {
       throw new Error('DELETE_THREAD_COMMENT.ACCESS_FORBIDEN');
     }
-    return this.threadRepository.deleteThreadCommentById(id);
+    return this.commentRepository.deleteCommentById(id);
   }
 }
 
