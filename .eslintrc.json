@@ -12,5 +12,13 @@
         "ecmaVersion": "latest"
     },
     "rules": {
+      "class-methods-use-this" : [
+        "error",
+        {
+          "exceptMethods" : [
+            "verifyPayload"
+          ]
+        }
+      ]
     }
 }

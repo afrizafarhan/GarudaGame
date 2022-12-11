@@ -15,6 +15,7 @@ describe('AddThreadComment Entities', () => {
       content: true,
       userId: 123,
       commentId: 123,
+      threadId: 123,
     };
 
     expect(() => new AddThreadCommentReply(payload)).toThrowError('ADD_THREAD_COMMENT_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
@@ -25,12 +26,19 @@ describe('AddThreadComment Entities', () => {
       content: 'dicoding',
       userId: 'user-123',
       commentId: 'comment-123',
+      threadId: 'thread-123',
     };
 
-    const { content, userId, commentId } = new AddThreadCommentReply(payload);
+    const {
+      content,
+      userId,
+      commentId,
+      threadId,
+    } = new AddThreadCommentReply(payload);
 
     expect(content).toEqual(payload.content);
     expect(userId).toEqual(payload.userId);
     expect(commentId).toEqual(payload.commentId);
+    expect(threadId).toEqual(payload.threadId);
   });
 });

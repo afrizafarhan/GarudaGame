@@ -11,7 +11,7 @@ describe('DetailThreadComment entities', () => {
     const payload = {
       id: 123,
       username: {},
-      created_at: 123,
+      date: 123,
       content: 'Mantap',
     };
     expect(() => new DetailThreadComment(payload)).toThrowError('DETAIL_THREAD_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
@@ -20,7 +20,7 @@ describe('DetailThreadComment entities', () => {
     const payload = {
       id: 'comment-123',
       username: 'dicoding',
-      created_at: new Date('2021-08-08T07:19:09.775Z').toISOString(),
+      date: '2021-08-08T07:19:09.775Z',
       content: 'Dicoding indonesia',
     };
     const {
@@ -32,7 +32,7 @@ describe('DetailThreadComment entities', () => {
 
     expect(id).toEqual(payload.id);
     expect(username).toEqual(payload.username);
-    expect(date).toEqual(payload.created_at);
+    expect(date).toEqual(payload.date);
     expect(content).toEqual(payload.content);
   });
 });

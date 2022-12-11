@@ -1,6 +1,5 @@
 const ThreadRepository = require('../../Domains/threads/ThreadRepository');
 const RecordedThread = require('../../Domains/threads/entities/RecordedThread');
-const RecordedThreadComment = require('../../Domains/threads/entities/RecordedThreadComment');
 
 class ThreadRepositoryPostgres extends ThreadRepository {
   constructor(pool, idGenerator) {
@@ -24,7 +23,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
   async getThreadById(threadId) {
     const query = {
-      text: 'SELECT t.id, t.title, t.body, t.created_at, t.user_id, u.username FROM threads t INNER JOIN users u ON u.id = t.user_id WHERE t.id = $1',
+      text: 'SELECT t.id, t.title, t.body, t.created_at as date, u.username FROM threads t INNER JOIN users u ON u.id = t.user_id WHERE t.id = $1',
       values: [threadId],
     };
 

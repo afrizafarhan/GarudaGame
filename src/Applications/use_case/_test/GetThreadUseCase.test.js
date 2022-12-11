@@ -1,7 +1,7 @@
 const GetThreadUseCase = require('../GetThreadUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const DetailThread = require('../../../Domains/threads/entities/DetailThread');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
+const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
 
 describe('GetThreadUseCase', () => {
   it('should throw error when thread not found', async () => {
@@ -19,14 +19,13 @@ describe('GetThreadUseCase', () => {
   });
   it('should orchestrating the get thread action correctly', async () => {
     const mockThreadRepository = new ThreadRepository();
-    const expectedResult = new DetailThread({
+    const expectedResult = {
       id: 'thread-123',
       title: 'dicoding',
       body: 'dicoding indonesia',
-      user_id: 'user-123',
       username: 'dicoding',
-      created_at: '2021-08-08T07:19:09.775Z',
-    });
+      date: '2021-08-08T07:19:09.775Z',
+    };
     mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve({
         rowCount: 1,
@@ -35,9 +34,8 @@ describe('GetThreadUseCase', () => {
             id: 'thread-123',
             title: 'dicoding',
             body: 'dicoding indonesia',
-            user_id: 'user-123',
             username: 'dicoding',
-            created_at: '2021-08-08T07:19:09.775Z',
+            date: '2021-08-08T07:19:09.775Z',
           },
         ],
       }));
@@ -52,23 +50,23 @@ describe('GetThreadUseCase', () => {
   it('should orchestrating the get thread with comments action correctly', async () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
+    const mockReplyRepository = new ReplyRepository();
     const expectedCommentResult = {
       id: 'comment-123',
       content: 'dicoding',
       username: 'dicoding',
       date: '2021-08-08T07:22:33.555Z',
     };
-    const expectedResult = new DetailThread({
+    const expectedResult = {
       id: 'thread-123',
       title: 'dicoding',
       body: 'dicoding indonesia',
-      user_id: 'user-123',
       username: 'dicoding',
-      created_at: '2021-08-08T07:19:09.775Z',
+      date: '2021-08-08T07:19:09.775Z',
       comments: [
         expectedCommentResult,
       ],
-    });
+    };
     mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve({
         rowCount: 1,
@@ -77,9 +75,8 @@ describe('GetThreadUseCase', () => {
             id: 'thread-123',
             title: 'dicoding',
             body: 'dicoding indonesia',
-            user_id: 'user-123',
             username: 'dicoding',
-            created_at: '2021-08-08T07:19:09.775Z',
+            date: '2021-08-08T07:19:09.775Z',
           },
         ],
       }));
@@ -95,9 +92,15 @@ describe('GetThreadUseCase', () => {
           },
         ],
       }));
+    mockReplyRepository.getReplyByCommentId = jest.fn()
+      .mockImplementation(() => Promise.resolve({
+        rowCount: 0,
+        rows: [],
+      }));
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
+      replyRepository: mockReplyRepository,
     });
     const getThread = await getThreadUseCase.execute('thread-123', true);
     expect(getThread).toStrictEqual(expectedResult);
@@ -107,23 +110,23 @@ describe('GetThreadUseCase', () => {
   it('should orchestrating the get thread with deleted comments action correctly', async () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
+    const mockReplyRepository = new ReplyRepository();
     const expectedCommentResult = {
       id: 'comment-123',
       content: '**komentar telah dihapus**',
       username: 'dicoding',
       date: '2021-08-08T07:22:33.555Z',
     };
-    const expectedResult = new DetailThread({
+    const expectedResult = {
       id: 'thread-123',
       title: 'dicoding',
       body: 'dicoding indonesia',
-      user_id: 'user-123',
       username: 'dicoding',
-      created_at: '2021-08-08T07:19:09.775Z',
+      date: '2021-08-08T07:19:09.775Z',
       comments: [
         expectedCommentResult,
       ],
-    });
+    };
     mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve({
         rowCount: 1,
@@ -132,9 +135,8 @@ describe('GetThreadUseCase', () => {
             id: 'thread-123',
             title: 'dicoding',
             body: 'dicoding indonesia',
-            user_id: 'user-123',
             username: 'dicoding',
-            created_at: '2021-08-08T07:19:09.775Z',
+            date: '2021-08-08T07:19:09.775Z',
           },
         ],
       }));
@@ -151,9 +153,106 @@ describe('GetThreadUseCase', () => {
           },
         ],
       }));
+    mockReplyRepository.getReplyByCommentId = jest.fn()
+      .mockImplementation(() => Promise.resolve({
+        rowCount: 0,
+        rows: [],
+      }));
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
+      replyRepository: mockReplyRepository,
+    });
+    const getThread = await getThreadUseCase.execute('thread-123', true);
+    expect(getThread).toStrictEqual(expectedResult);
+    expect(mockThreadRepository.getThreadById).toBeCalledWith('thread-123');
+    expect(mockCommentRepository.getCommentByThreadId).toBeCalledWith('thread-123');
+  });
+  it('should orchestrating the get thread with comments and reply action correctly', async () => {
+    const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+    const mockReplyRepository = new ReplyRepository();
+    const expectedCommentResult = {
+      id: 'comment-123',
+      content: 'dicoding',
+      username: 'dicoding',
+      date: '2021-08-08T07:22:33.555Z',
+      replies: [
+        {
+          id: 'reply-123',
+          content: 'Dicoding reply',
+          date: '2021-08-08T07:22:33.555Z',
+          username: 'Dicoding 1',
+        },
+        {
+          id: 'reply-124',
+          content: '**balasan telah dihapus**',
+          date: '2021-08-08T07:22:33.555Z',
+          username: 'Dicoding 2',
+        },
+      ],
+    };
+    const expectedResult = {
+      id: 'thread-123',
+      title: 'dicoding',
+      body: 'dicoding indonesia',
+      username: 'dicoding',
+      date: '2021-08-08T07:19:09.775Z',
+      comments: [
+        expectedCommentResult,
+      ],
+    };
+    mockThreadRepository.getThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve({
+        rowCount: 1,
+        rows: [
+          {
+            id: 'thread-123',
+            title: 'dicoding',
+            body: 'dicoding indonesia',
+            username: 'dicoding',
+            date: '2021-08-08T07:19:09.775Z',
+          },
+        ],
+      }));
+    mockCommentRepository.getCommentByThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve({
+        rowCount: 1,
+        rows: [
+          {
+            id: 'comment-123',
+            content: 'dicoding',
+            username: 'dicoding',
+            date: '2021-08-08T07:22:33.555Z',
+          },
+        ],
+      }));
+    mockReplyRepository.getReplyByCommentId = jest.fn()
+      .mockImplementation(() => Promise.resolve({
+        rowCount: 2,
+        rows: [
+          {
+            id: 'reply-123',
+            content: 'Dicoding reply',
+            username: 'Dicoding 1',
+            date: '2021-08-08T07:22:33.555Z',
+            commentId: 'comment-123',
+            is_delete: false,
+          },
+          {
+            id: 'reply-124',
+            content: 'Dicoding reply 2',
+            username: 'Dicoding 2',
+            date: '2021-08-08T07:22:33.555Z',
+            commentId: 'comment-123',
+            is_delete: true,
+          },
+        ],
+      }));
+    const getThreadUseCase = new GetThreadUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+      replyRepository: mockReplyRepository,
     });
     const getThread = await getThreadUseCase.execute('thread-123', true);
     expect(getThread).toStrictEqual(expectedResult);
