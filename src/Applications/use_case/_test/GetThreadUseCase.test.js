@@ -241,7 +241,7 @@ describe('GetThreadUseCase', () => {
           },
           {
             id: 'reply-124',
-            content: 'Dicoding reply 2',
+            content: '**balasan telah dihapus**',
             username: 'Dicoding 2',
             date: '2021-08-08T07:22:33.555Z',
             commentId: 'comment-123',

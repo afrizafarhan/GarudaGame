@@ -28,6 +28,8 @@ DomainErrorTranslator.directories = {
   'DELETE_THREAD_COMMENT.ACCESS_FORBIDEN': new AuthorizationError('kamu tidak punya akses untuk menghapus komentar ini'),
   'ADD_THREAD_COMMENT_REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat reply karena properti yang dibutuhkan tidak ada'),
   'ADD_THREAD_COMMENT_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('content harus string'),
+  'GET_REPLY.NO_REPLY_FOUND': new NotFoundError('reply tidak ditemukan'),
+  'DELETE_REPLY.ACCESS_FORBIDEN': new AuthorizationError('kamu tidak punya akses untuk menghapus reply ini'),
 };
 
 module.exports = DomainErrorTranslator;

@@ -74,4 +74,20 @@ describe('ReplyRepositoryPostgres', () => {
       expect(data.rowCount).toEqual(1);
     });
   });
+
+  describe('deleteReplyById', () => {
+    it('should persist delete reply by reply id', async () => {
+      await ThreadTableTestHelper.addThread({ userId: 'user-123' });
+      await ThreadCommentsTableTestHelper.addThreadComment({
+        threadId: 'thread-123',
+      });
+      await ReplyTableTestHelper.addReply({
+        userId: 'user-124',
+      });
+      const replyRepository = new ReplyRepositoryPostgres(pool, {});
+      const data = await replyRepository.deleteReplyById('reply-123');
+      expect(data.rowCount).toEqual(1);
+      expect(data.rows[0].is_delete).toEqual(true);
+    });
+  });
 });

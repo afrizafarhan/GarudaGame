@@ -1,4 +1,3 @@
-
 class GetThreadUseCase {
   constructor({ threadRepository, commentRepository, replyRepository }) {
     this.threadRepository = threadRepository;

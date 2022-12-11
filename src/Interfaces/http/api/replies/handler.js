@@ -1,4 +1,5 @@
 const AddReplyUseCase = require('../../../../Applications/use_case/AddReplyUseCase');
+const DeleteReplyUseCase = require('../../../../Applications/use_case/DeleteReplyUseCase');
 
 class ReplyHandler {
   constructor(container) {
@@ -31,16 +32,17 @@ class ReplyHandler {
   }
 
   async deleteReplyHandler(request, h) {
-    // const deleteThreadComment = this.container.getInstance(DeleteThreadCommentUseCase.name);
-    // const payload = {
-    //   commentId: request.params.commentId,
-    //   threadId: request.params.threadId,
-    //   userId: request.auth.credentials.id,
-    // };
-    // await deleteThreadComment.execute(payload);
-    // return h.response({
-    //   status: 'success',
-    // });
+    const deleteReply = this.container.getInstance(DeleteReplyUseCase.name);
+    const payload = {
+      commentId: request.params.commentId,
+      threadId: request.params.threadId,
+      userId: request.auth.credentials.id,
+      replyId: request.params.replyId,
+    };
+    await deleteReply.execute(payload);
+    return h.response({
+      status: 'success',
+    });
   }
 }
 
