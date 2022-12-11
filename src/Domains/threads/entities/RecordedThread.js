@@ -1,6 +1,6 @@
 class RecordedThread {
   constructor(payload) {
-    this._verifyPayload(payload);
+    this.verifyPayload(payload);
 
     const { id, title, owner } = payload;
 
@@ -9,7 +9,7 @@ class RecordedThread {
     this.owner = owner;
   }
 
-  _verifyPayload(payload) {
+  verifyPayload(payload) {
     if (!payload.id || !payload.title || !payload.owner) {
       throw new Error('RECORDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }
