@@ -1,0 +1,7 @@
+{
+  "user": "postgres",
+  "password": "admin",
+  "host": "172.20.0.3",
+  "port": 5432,
+  "database": "forumapi_test"
+}
