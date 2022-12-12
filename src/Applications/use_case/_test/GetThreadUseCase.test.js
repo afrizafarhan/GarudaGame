@@ -247,6 +247,14 @@ describe('GetThreadUseCase', () => {
             commentId: 'comment-123',
             is_delete: true,
           },
+          {
+            id: 'reply-125',
+            content: '**balasan telah dihapus**',
+            username: 'Dicoding 2',
+            date: '2021-08-08T07:22:33.555Z',
+            commentId: 'comment-132',
+            is_delete: true,
+          },
         ],
       }));
     const getThreadUseCase = new GetThreadUseCase({
