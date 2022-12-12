@@ -16,7 +16,8 @@
         "error",
         {
           "exceptMethods" : [
-            "verifyPayload"
+            "verifyPayload",
+            "validatePayload"
           ]
         }
       ]
