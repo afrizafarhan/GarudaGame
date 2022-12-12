@@ -1,5 +1,4 @@
 const ThreadRepository = require('../../Domains/threads/ThreadRepository');
-const RecordedThread = require('../../Domains/threads/entities/RecordedThread');
 
 class ThreadRepositoryPostgres extends ThreadRepository {
   constructor(pool, idGenerator) {
@@ -12,13 +11,11 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const { title, body, userId } = recordThread;
     const id = `thread-${this.idGenerator()}`;
     const query = {
-      text: 'INSERT INTO threads VALUES($1, $2, $3, $4) RETURNING id, title, user_id',
+      text: 'INSERT INTO threads VALUES($1, $2, $3, $4) RETURNING id, title, user_id as owner',
       values: [id, title, body, userId],
     };
     const result = await this.pool.query(query);
-    return new RecordedThread({
-      id: result.rows[0].id, title: result.rows[0].title, owner: result.rows[0].user_id,
-    });
+    return result.rows[0];
   }
 
   async getThreadById(threadId) {
