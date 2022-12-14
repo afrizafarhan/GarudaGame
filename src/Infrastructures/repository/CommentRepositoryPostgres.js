@@ -46,6 +46,17 @@ class CommentRepositoryPostgres extends CommentRepository {
     };
     await this.pool.query(query);
   }
+
+  async verifyOwnerCommentByIdAndUserId(commentId, userId) {
+    const query = {
+      text: 'SELECT * FROM thread_comments WHERE id = $1 AND user_id = $2',
+      values: [commentId, userId],
+    };
+    const result = await this.pool.query(query);
+    if (!result.rowCount) {
+      throw new Error('VERIFY_COMMENT_OWNER.ACCESS_FORBIDEN');
+    }
+  }
 }
 
 module.exports = CommentRepositoryPostgres;

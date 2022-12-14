@@ -25,6 +25,7 @@ DomainErrorTranslator.directories = {
   'ADD_THREAD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat komentar pada thread dikarenakan properti yang dibutuhkan tidak ada'),
   'ADD_THREAD_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('content harus string'),
   'GET_THREAD_COMMENT.NO_THREAD_COMMENT_FOUND': new NotFoundError('komen tidak ditemukan'),
+  'VERIFY_COMMENT_OWNER.ACCESS_FORBIDEN': new AuthorizationError('kamu tidak punya akses untuk komentar ini'),
   'DELETE_THREAD_COMMENT.ACCESS_FORBIDEN': new AuthorizationError('kamu tidak punya akses untuk menghapus komentar ini'),
   'ADD_THREAD_COMMENT_REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat reply karena properti yang dibutuhkan tidak ada'),
   'ADD_THREAD_COMMENT_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('content harus string'),

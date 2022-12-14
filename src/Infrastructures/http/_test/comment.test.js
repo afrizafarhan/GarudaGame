@@ -242,7 +242,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(403);
       expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('kamu tidak punya akses untuk menghapus komentar ini');
+      expect(responseJson.message).toEqual('kamu tidak punya akses untuk komentar ini');
     });
     it('should response 200', async () => {
       await ThreadTableTestHelper.addThread({

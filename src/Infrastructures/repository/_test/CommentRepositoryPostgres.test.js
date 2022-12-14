@@ -98,4 +98,25 @@ describe('CommentRepository', () => {
     await expect(commentRepositoryPostgres.verifyAvailabilityCommentByIdAndThreadId('comment-123', 'thread-123'))
       .resolves;
   });
+
+  describe('verifyOwnerCommentByIdAndUserId function', () => {
+    it('should throw error when comment tried to access by a user who does not have permission', async () => {
+      const user = await UsersTableTestHelper.findUsersById('user-123');
+      const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      await ThreadTableTestHelper.addThread({ userId: user[0].id });
+      await ThreadCommentsTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id, threadId: 'thread-123' });
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+      await expect(commentRepositoryPostgres.verifyOwnerCommentByIdAndUserId('comment-123', 'user-123'))
+        .rejects.toThrowError('VERIFY_COMMENT_OWNER.ACCESS_FORBIDEN');
+    });
+  });
+  it('should throw error when comment id not accordance with thread id', async () => {
+    const user = await UsersTableTestHelper.findUsersById('user-123');
+    const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+    await ThreadTableTestHelper.addThread({ userId: user[0].id });
+    await ThreadCommentsTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id, threadId: 'thread-123' });
+    const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+    await expect(commentRepositoryPostgres.verifyOwnerCommentByIdAndUserId('comment-123', secondUser[0].id))
+      .resolves;
+  });
 });
