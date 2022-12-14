@@ -10,6 +10,7 @@ const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 describe('ReplyRepositoryPostgres', () => {
   beforeAll(async () => {
     await UsersTableTestHelper.addUser({ username: 'dicoding' });
+    await UsersTableTestHelper.addUser({ username: 'hantu', id: 'user-124' });
   });
   afterEach(async () => {
     await ReplyTableTestHelper.cleanTable();
@@ -40,23 +41,54 @@ describe('ReplyRepositoryPostgres', () => {
       const replyRepository = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
 
       const data = await replyRepository.addReply(addReply);
-      expect(data.rows).toHaveLength(1);
+      const { comment_id: commentId } = (await ReplyTableTestHelper.findReplyById('reply-123'))[0];
+      expect(data.id).toEqual(`reply-${fakeIdGenerator()}`);
+      expect(data.content).toEqual(addReply.content);
+      expect(data.owner).toEqual(addReply.userId);
+      expect(commentId).toEqual(addReply.commentId);
     });
   });
 
-  describe('getReplyByIdAndCommentId', () => {
+  describe('verifyReplyByIdAndCommentId', () => {
+    it('should throw error when reply not accordance to comment', async () => {
+      await ThreadTableTestHelper.addThread({ userId: 'user-123' });
+      await ThreadCommentsTableTestHelper.addThreadComment({
+        threadId: 'thread-123',
+      });
+      await ReplyTableTestHelper.addReply({
+        userId: 'user-124',
+      });
+      const replyRepository = new ReplyRepositoryPostgres(pool, {});
+      await expect(replyRepository.verifyReplyByIdAndCommentId('reply-123', 'comment-124'))
+        .rejects.toThrow(new Error('GET_REPLY.NO_REPLY_FOUND'));
+    });
     it('should presist get reply by id and comment id', async () => {
       await ThreadTableTestHelper.addThread({ userId: 'user-123' });
       await ThreadCommentsTableTestHelper.addThreadComment({
         threadId: 'thread-123',
       });
-      await UsersTableTestHelper.addUser({ username: 'hantu', id: 'user-124' });
       await ReplyTableTestHelper.addReply({
         userId: 'user-124',
       });
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
-      const data = await replyRepository.getReplyByIdAndCommentId('reply-123', 'comment-123');
-      expect(data.rowCount).toEqual(1);
+      await expect(replyRepository.verifyReplyByIdAndCommentId('reply-123', 'comment-123'))
+        .resolves.not.toThrow(Error);
+    });
+  });
+
+  describe('deleteReplyById', () => {
+    it('should persist delete reply by reply id', async () => {
+      await ThreadTableTestHelper.addThread({ userId: 'user-123' });
+      await ThreadCommentsTableTestHelper.addThreadComment({
+        threadId: 'thread-123',
+      });
+      await ReplyTableTestHelper.addReply({
+        userId: 'user-124',
+      });
+      const replyRepository = new ReplyRepositoryPostgres(pool, {});
+      await replyRepository.deleteReplyById('reply-123');
+      const data = (await ReplyTableTestHelper.findReplyById('reply-123'))[0];
+      expect(data.is_delete).toEqual(true);
     });
   });
 
@@ -71,23 +103,7 @@ describe('ReplyRepositoryPostgres', () => {
       });
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
       const data = await replyRepository.getReplyByCommentId(['comment-123']);
-      expect(data.rowCount).toEqual(1);
-    });
-  });
-
-  describe('deleteReplyById', () => {
-    it('should persist delete reply by reply id', async () => {
-      await ThreadTableTestHelper.addThread({ userId: 'user-123' });
-      await ThreadCommentsTableTestHelper.addThreadComment({
-        threadId: 'thread-123',
-      });
-      await ReplyTableTestHelper.addReply({
-        userId: 'user-124',
-      });
-      const replyRepository = new ReplyRepositoryPostgres(pool, {});
-      const data = await replyRepository.deleteReplyById('reply-123');
-      expect(data.rowCount).toEqual(1);
-      expect(data.rows[0].is_delete).toEqual(true);
+      expect(data).toHaveLength(1);
     });
   });
 });

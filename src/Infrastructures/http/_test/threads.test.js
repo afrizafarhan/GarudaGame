@@ -200,7 +200,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread).toHaveProperty('date');
       expect(responseJson.data.thread).toHaveProperty('username');
       expect(responseJson.data.thread).toHaveProperty('comments');
-      expect(typeof responseJson.data.thread.comments).toEqual('array');
+      expect(typeof responseJson.data.thread.comments).toEqual('object');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('id');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('username');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('date');
@@ -229,18 +229,18 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread).toHaveProperty('username');
       expect(responseJson.data.thread).toHaveProperty('comments');
 
-      expect(typeof responseJson.data.thread.comments).toEqual('array');
+      expect(typeof responseJson.data.thread.comments).toEqual('object');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('id');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('username');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('date');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('content');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('replies');
 
-      expect(typeof responseJson.data.thread.comments[0].replies).toEqual('array');
-      expect(responseJson.data.thread.comments[0].replies).toHaveProperty('id');
-      expect(responseJson.data.thread.comments[0].replies).toHaveProperty('content');
-      expect(responseJson.data.thread.comments[0].replies).toHaveProperty('date');
-      expect(responseJson.data.thread.comments[0].replies).toHaveProperty('username');
+      expect(typeof responseJson.data.thread.comments[0].replies).toEqual('object');
+      expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('id');
+      expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('content');
+      expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('date');
+      expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('username');
     });
   });
 });
