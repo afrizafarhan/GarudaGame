@@ -84,7 +84,6 @@ describe('DeleteThreadCommentUseCase', () => {
       .mockImplementation(() => Promise.resolve());
     mockCommentRepository.deleteCommentById = jest.fn()
       .mockImplementation(() => Promise.resolve());
-    const spyDelete = jest.spyOn(mockCommentRepository, 'deleteCommentById');
     const deleteThreadCommentUseCase = new DeleteThreadCommentUseCase({
       threadRepository: mockRepository,
       commentRepository: mockCommentRepository,
@@ -95,8 +94,7 @@ describe('DeleteThreadCommentUseCase', () => {
       .toBeCalledWith(payload.commentId, payload.threadId);
     expect(mockCommentRepository.verifyOwnerCommentByIdAndUserId)
       .toBeCalledWith(payload.commentId, payload.userId);
+    expect(mockCommentRepository.deleteCommentById).toBeCalledTimes(1);
     expect(mockCommentRepository.deleteCommentById).toBeCalledWith(payload.commentId);
-    expect(spyDelete).toBeCalledTimes(1);
-    expect(spyDelete).toBeCalledWith(payload.commentId);
   });
 });

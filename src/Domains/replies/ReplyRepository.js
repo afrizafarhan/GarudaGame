@@ -5,7 +5,11 @@ class ReplyRepository {
     throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getReplyByIdAndCommentId(replyId, commentId) {
+  async verifyReplyByIdAndCommentId(replyId, commentId) {
+    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
+  async verifyOwnerReplyByIdAndUserId(replyId, userId) {
     throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 

@@ -16,10 +16,8 @@ describe('AddReplyUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
     const mockCommentRepository = new CommentRepository();
 
-    mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 0,
-      }));
+    mockThreadRepository.verifyAvailabilityThreadById = jest.fn()
+      .mockImplementation(() => Promise.reject(new Error('GET_THREAD.NO_THREAD_FOUND')));
 
     const getReply = new AddReplyUseCase({
       replyRepository: mockReplyRepository,
@@ -28,9 +26,9 @@ describe('AddReplyUseCase', () => {
     });
 
     await expect(getReply.execute(useCasePayload)).rejects.toThrowError('GET_THREAD.NO_THREAD_FOUND');
-    expect(mockThreadRepository.getThreadById).toBeCalledWith('thread-123');
+    expect(mockThreadRepository.verifyAvailabilityThreadById).toBeCalledWith('thread-123');
   });
-  it('should throw error when cooment on thread not found', async () => {
+  it('should throw error when coment on thread not found', async () => {
     const useCasePayload = {
       content: 'dicoding',
       userId: 'user-123',
@@ -42,13 +40,11 @@ describe('AddReplyUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
     const mockCommentRepository = new CommentRepository();
 
-    mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
+    mockThreadRepository.verifyAvailabilityThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
-    mockCommentRepository.getCommentByIdAndThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve({ rowCount: 0 }));
+    mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId = jest.fn()
+      .mockImplementation(() => Promise.reject(new Error('GET_THREAD_COMMENT.NO_THREAD_COMMENT_FOUND')));
 
     const getReply = new AddReplyUseCase({
       replyRepository: mockReplyRepository,
@@ -57,8 +53,8 @@ describe('AddReplyUseCase', () => {
     });
 
     await expect(getReply.execute(useCasePayload)).rejects.toThrowError('GET_THREAD_COMMENT.NO_THREAD_COMMENT_FOUND');
-    expect(mockThreadRepository.getThreadById).toBeCalledWith('thread-123');
-    expect(mockCommentRepository.getCommentByIdAndThreadId).toBeCalledWith('comment-123', 'thread-123');
+    expect(mockThreadRepository.verifyAvailabilityThreadById).toBeCalledWith('thread-123');
+    expect(mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId).toBeCalledWith('comment-123', 'thread-123');
   });
   it('should orchestrating the add reply comment action correctly', async () => {
     const useCasePayload = {
@@ -78,13 +74,11 @@ describe('AddReplyUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
     const mockCommentRepository = new CommentRepository();
 
-    mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
+    mockThreadRepository.verifyAvailabilityThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
-    mockCommentRepository.getCommentByIdAndThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve({ rowCount: 1 }));
+    mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
     mockReplyRepository.addReply = jest.fn()
       .mockImplementation(() => Promise.resolve({
@@ -101,8 +95,8 @@ describe('AddReplyUseCase', () => {
 
     const recordedReply = await getReply.execute(useCasePayload);
     expect(recordedReply).toStrictEqual(expectedReply);
-    expect(mockThreadRepository.getThreadById).toBeCalledWith('thread-123');
-    expect(mockCommentRepository.getCommentByIdAndThreadId).toBeCalledWith('comment-123', 'thread-123');
+    expect(mockThreadRepository.verifyAvailabilityThreadById).toBeCalledWith('thread-123');
+    expect(mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId).toBeCalledWith('comment-123', 'thread-123');
     expect(mockReplyRepository.addReply).toBeCalledWith(useCasePayload);
   });
 });

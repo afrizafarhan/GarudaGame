@@ -9,15 +9,9 @@ class AddReplyUseCase {
 
   async execute(payload) {
     const addReply = new AddReply(payload);
-    const thread = await this.threadRepository.getThreadById(addReply.threadId);
-    if (!thread.rowCount) {
-      throw new Error('GET_THREAD.NO_THREAD_FOUND');
-    }
-    const comment = await this.commentRepository
-      .getCommentByIdAndThreadId(addReply.commentId, addReply.threadId);
-    if (!comment.rowCount) {
-      throw new Error('GET_THREAD_COMMENT.NO_THREAD_COMMENT_FOUND');
-    }
+    await this.threadRepository.verifyAvailabilityThreadById(addReply.threadId);
+    await this.commentRepository
+      .verifyAvailabilityCommentByIdAndThreadId(addReply.commentId, addReply.threadId);
     return this.replyRepository.addReply(addReply);
   }
 }

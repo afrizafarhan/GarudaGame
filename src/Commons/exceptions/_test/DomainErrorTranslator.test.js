@@ -43,8 +43,8 @@ describe('DomainErrorTranslator', () => {
       .toStrictEqual(new InvariantError('content harus string'));
     expect(DomainErrorTranslator.translate(new Error('GET_REPLY.NO_REPLY_FOUND')))
       .toStrictEqual(new NotFoundError('reply tidak ditemukan'));
-    expect(DomainErrorTranslator.translate(new Error('DELETE_REPLY.ACCESS_FORBIDEN')))
-      .toStrictEqual(new AuthorizationError('kamu tidak punya akses untuk menghapus reply ini'));
+    expect(DomainErrorTranslator.translate(new Error('VERIFY_OWNER_REPLY.ACCESS_FORBIDEN')))
+      .toStrictEqual(new AuthorizationError('kamu tidak punya akses untuk reply ini'));
     expect(DomainErrorTranslator.translate(new Error('VERIFY_COMMENT_OWNER.ACCESS_FORBIDEN')))
       .toStrictEqual(new AuthorizationError('kamu tidak punya akses untuk komentar ini'));
   });

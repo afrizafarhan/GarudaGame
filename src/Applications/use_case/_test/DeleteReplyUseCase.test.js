@@ -17,10 +17,8 @@ describe('DeleteReplyUseCase', () => {
       replyId: 'reply-123',
     };
 
-    mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 0,
-      }));
+    mockThreadRepository.verifyAvailabilityThreadById = jest.fn()
+      .mockImplementation(() => Promise.reject(new Error('GET_THREAD.NO_THREAD_FOUND')));
     const deleteReplyUseCase = new DeleteReplyUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
@@ -40,14 +38,10 @@ describe('DeleteReplyUseCase', () => {
       replyId: 'reply-123',
     };
 
-    mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
-    mockCommentRepository.getCommentByIdAndThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 0,
-      }));
+    mockThreadRepository.verifyAvailabilityThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId = jest.fn()
+      .mockImplementation(() => Promise.reject(new Error('GET_THREAD_COMMENT.NO_THREAD_COMMENT_FOUND')));
     const deleteReplyUseCase = new DeleteReplyUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
@@ -67,18 +61,12 @@ describe('DeleteReplyUseCase', () => {
       replyId: 'reply-123',
     };
 
-    mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
-    mockCommentRepository.getCommentByIdAndThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
-    mockReplyRepository.getReplyByIdAndCommentId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 0,
-      }));
+    mockThreadRepository.verifyAvailabilityThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.verifyReplyByIdAndCommentId = jest.fn()
+      .mockImplementation(() => Promise.reject(new Error('GET_REPLY.NO_REPLY_FOUND')));
     const deleteReplyUseCase = new DeleteReplyUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
@@ -98,38 +86,27 @@ describe('DeleteReplyUseCase', () => {
       replyId: 'reply-123',
     };
 
-    mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
-    mockCommentRepository.getCommentByIdAndThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
-    mockReplyRepository.getReplyByIdAndCommentId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-        rows: [
-          {
-            user_id: 'user-124',
-          },
-        ],
-      }));
-    mockReplyRepository.deleteReplyById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
+    mockThreadRepository.verifyAvailabilityThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.verifyReplyByIdAndCommentId = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.verifyOwnerReplyByIdAndUserId = jest.fn()
+      .mockImplementation(() => Promise.reject(new Error('VERIFY_OWNER_REPLY.ACCESS_FORBIDEN')));
     const deleteReplyUseCase = new DeleteReplyUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository,
     });
-    await expect(deleteReplyUseCase.execute(payload)).rejects.toThrowError('DELETE_REPLY.ACCESS_FORBIDEN');
-    expect(mockReplyRepository.getReplyByIdAndCommentId)
-      .toBeCalledWith(payload.replyId, payload.commentId);
-    expect(mockCommentRepository.getCommentByIdAndThreadId)
+    await expect(deleteReplyUseCase.execute(payload)).rejects.toThrowError('VERIFY_OWNER_REPLY.ACCESS_FORBIDEN');
+    expect(mockThreadRepository.verifyAvailabilityThreadById).toBeCalledWith(payload.threadId);
+    expect(mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId)
       .toBeCalledWith(payload.commentId, payload.threadId);
-    expect(mockThreadRepository.getThreadById).toBeCalledWith(payload.threadId);
+    expect(mockReplyRepository.verifyReplyByIdAndCommentId)
+      .toBeCalledWith(payload.replyId, payload.commentId);
+    expect(mockReplyRepository.verifyOwnerReplyByIdAndUserId)
+      .toBeCalledWith(payload.replyId, payload.userId);
   });
   it('should delete reply correctly', async () => {
     const mockCommentRepository = new CommentRepository();
@@ -143,39 +120,33 @@ describe('DeleteReplyUseCase', () => {
       replyId: 'reply-123',
     };
 
-    mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
-    mockCommentRepository.getCommentByIdAndThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
-    mockReplyRepository.getReplyByIdAndCommentId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-        rows: [
-          {
-            user_id: 'user-123',
-          },
-        ],
-      }));
+    mockThreadRepository.verifyAvailabilityThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.verifyReplyByIdAndCommentId = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.verifyOwnerReplyByIdAndUserId = jest.fn()
+      .mockImplementation(() => Promise.resolve());
     mockReplyRepository.deleteReplyById = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-      }));
+      .mockImplementation(() => Promise.resolve());
     const deleteReplyUseCase = new DeleteReplyUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository,
     });
-    const deleteReply = await deleteReplyUseCase.execute(payload);
-    expect(deleteReply).toHaveProperty('rowCount');
-    expect(mockReplyRepository.deleteReplyById).toBeCalledTimes(1);
-    expect(mockReplyRepository.getReplyByIdAndCommentId)
-      .toBeCalledWith(payload.replyId, payload.commentId);
-    expect(mockCommentRepository.getCommentByIdAndThreadId)
+    await deleteReplyUseCase.execute(payload);
+    expect(mockThreadRepository.verifyAvailabilityThreadById).toBeCalledWith(payload.threadId);
+
+    expect(mockCommentRepository.verifyAvailabilityCommentByIdAndThreadId)
       .toBeCalledWith(payload.commentId, payload.threadId);
-    expect(mockThreadRepository.getThreadById).toBeCalledWith(payload.threadId);
+
+    expect(mockReplyRepository.verifyReplyByIdAndCommentId)
+      .toBeCalledWith(payload.replyId, payload.commentId);
+    expect(mockReplyRepository.verifyOwnerReplyByIdAndUserId)
+      .toBeCalledWith(payload.replyId, payload.userId);
+
+    expect(mockReplyRepository.deleteReplyById).toBeCalledTimes(1);
+    expect(mockReplyRepository.deleteReplyById).toBeCalledWith(payload.replyId);
   });
 });
