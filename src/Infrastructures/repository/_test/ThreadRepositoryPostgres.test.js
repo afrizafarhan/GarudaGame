@@ -32,11 +32,11 @@ describe('ThreadRepositoryPostgres', () => {
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
       const data = await threadRepositoryPostgres.addThread(addThread);
-      const { id: threadId, body } = await ThreadTableTestHelper.findThreadById('thread-123');
-      expect(threadId).toEqual(data.id);
-      expect(addThread.title).toEqual(data.title);
-      expect(addThread.userId).toEqual(data.owner);
-      expect(addThread.body).toEqual(body);
+      const { body } = await ThreadTableTestHelper.findThreadById('thread-123');
+      expect(data.id).toEqual(`thread-${fakeIdGenerator()}`);
+      expect(data.title).toEqual(addThread.title);
+      expect(data.owner).toEqual(addThread.userId);
+      expect(body).toEqual(addThread.body);
     });
   });
 
@@ -47,21 +47,24 @@ describe('ThreadRepositoryPostgres', () => {
     });
     it('should return thread correctly', async () => {
       const { id: userId, username } = (await UsersTableTestHelper.findUsersById('user-123'))[0];
+      const payload = {
+        id: 'thread-123',
+        title: 'Dicoding',
+        body: 'Dicoding Indonesia',
+        userId,
+      };
       await ThreadTableTestHelper
-        .addThread({ userId, id: 'thread-123' });
+        .addThread(payload);
       const {
-        id,
-        title,
-        body,
         created_at: date,
       } = await ThreadTableTestHelper.findThreadById('thread-123');
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
       const data = await threadRepositoryPostgres.getThreadById('thread-123');
-      expect(id).toEqual(data.id);
-      expect(title).toEqual(data.title);
-      expect(body).toEqual(data.body);
-      expect(date).toEqual(data.date);
-      expect(username).toEqual(data.username);
+      expect(data.id).toEqual(payload.id);
+      expect(data.title).toEqual(payload.title);
+      expect(data.body).toEqual(payload.body);
+      expect(data.date).toEqual(date);
+      expect(data.username).toEqual(username);
     });
   });
 
@@ -75,7 +78,7 @@ describe('ThreadRepositoryPostgres', () => {
       await ThreadTableTestHelper
         .addThread({ userId, id: 'thread-123' });
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
-      await expect(threadRepositoryPostgres.verifyAvailabilityThreadById('thread-123')).resolves;
+      await expect(threadRepositoryPostgres.verifyAvailabilityThreadById('thread-123')).resolves.not.toThrowError(Error('GET_THREAD.NO_THREAD_FOUND'));
     });
   });
 });

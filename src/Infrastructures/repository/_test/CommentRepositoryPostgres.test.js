@@ -39,6 +39,7 @@ describe('CommentRepository', () => {
       const comment = await commentRepositoryPostgres.addComment(addComment);
 
       const threadComments = await ThreadCommentsTableTestHelper.findThreadCommentById('comment-123');
+      expect(comment.id).toEqual(`comment-${fakeIdGenerator()}`);
       expect(comment.content).toEqual(addComment.content);
       expect(comment.owner).toEqual(addComment.userId);
 
@@ -51,17 +52,23 @@ describe('CommentRepository', () => {
     it('should persist get comment by thread correctly', async () => {
       const user = await UsersTableTestHelper.findUsersById('user-123');
       const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      const payload = {
+        id: 'comment-123',
+        content: 'Dicoding',
+        threadId: 'thread-123',
+        userId: secondUser[0].id,
+      };
       await ThreadTableTestHelper.addThread({ userId: user[0].id });
-      await ThreadCommentsTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id, threadId: 'thread-123' });
+      await ThreadCommentsTableTestHelper.addThreadComment(payload);
       const getComment = (await ThreadCommentsTableTestHelper.findThreadCommentById('comment-123'))[0];
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
       const data = await commentRepositoryPostgres.getCommentByThreadId('thread-123');
       expect(data).toHaveLength(1);
-      expect(data[0].id).toEqual(getComment.id);
-      expect(data[0].content).toEqual(getComment.content);
+      expect(data[0].id).toEqual(payload.id);
+      expect(data[0].content).toEqual(payload.content);
       expect(data[0].date).toEqual(getComment.created_at);
       expect(data[0].username).toEqual(secondUser[0].username);
-      expect(data[0].is_delete).toEqual(getComment.is_delete);
+      expect(data[0].is_delete).toEqual(false);
     });
   });
 
@@ -95,7 +102,7 @@ describe('CommentRepository', () => {
       await ThreadCommentsTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id, threadId: 'thread-123' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
       await expect(commentRepositoryPostgres.verifyAvailabilityCommentByIdAndThreadId('comment-123', 'thread-123'))
-        .resolves.not.toThrowError(Error);
+        .resolves.not.toThrowError('GET_THREAD_COMMENT.NO_THREAD_COMMENT_FOUND');
     });
   });
 
@@ -116,7 +123,7 @@ describe('CommentRepository', () => {
       await ThreadCommentsTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id, threadId: 'thread-123' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
       await expect(commentRepositoryPostgres.verifyOwnerCommentByIdAndUserId('comment-123', secondUser[0].id))
-        .resolves.not.toThrowError(Error);
+        .resolves.not.toThrowError('VERIFY_COMMENT_OWNER.ACCESS_FORBIDEN');
     });
   });
 });

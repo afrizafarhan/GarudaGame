@@ -60,7 +60,7 @@ describe('ReplyRepositoryPostgres', () => {
       });
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
       await expect(replyRepository.verifyReplyByIdAndCommentId('reply-123', 'comment-124'))
-        .rejects.toThrow(new Error('GET_REPLY.NO_REPLY_FOUND'));
+        .rejects.toThrow('GET_REPLY.NO_REPLY_FOUND');
     });
     it('should presist get reply by id and comment id', async () => {
       await ThreadTableTestHelper.addThread({ userId: 'user-123' });
@@ -72,7 +72,7 @@ describe('ReplyRepositoryPostgres', () => {
       });
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
       await expect(replyRepository.verifyReplyByIdAndCommentId('reply-123', 'comment-123'))
-        .resolves.not.toThrow(Error);
+        .resolves.not.toThrow('GET_REPLY.NO_REPLY_FOUND');
     });
   });
 
@@ -87,7 +87,7 @@ describe('ReplyRepositoryPostgres', () => {
       });
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
       await expect(replyRepository.verifyOwnerReplyByIdAndUserId('reply-123', 'user-123'))
-        .rejects.toThrow(new Error('VERIFY_OWNER_REPLY.ACCESS_FORBIDEN'));
+        .rejects.toThrow('VERIFY_OWNER_REPLY.ACCESS_FORBIDEN');
     });
     it('should presist get reply by id and comment id', async () => {
       await ThreadTableTestHelper.addThread({ userId: 'user-123' });
@@ -99,7 +99,7 @@ describe('ReplyRepositoryPostgres', () => {
       });
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
       await expect(replyRepository.verifyOwnerReplyByIdAndUserId('reply-123', 'user-124'))
-        .resolves.not.toThrow(Error);
+        .resolves.not.toThrow('VERIFY_OWNER_REPLY.ACCESS_FORBIDEN');
     });
   });
 
@@ -121,16 +121,31 @@ describe('ReplyRepositoryPostgres', () => {
 
   describe('getReplyByCommentId', () => {
     it('should persist get reply by comments id', async () => {
+      const { id, username } = (await UsersTableTestHelper.findUsersById('user-124'))[0];
       await ThreadTableTestHelper.addThread({ userId: 'user-123' });
       await ThreadCommentsTableTestHelper.addThreadComment({
         threadId: 'thread-123',
       });
-      await ReplyTableTestHelper.addReply({
-        userId: 'user-124',
-      });
+      const payload = {
+        id: 'reply-123',
+        content: 'Dicoding',
+        commentId: 'comment-123',
+        userId: id,
+      };
+      await ReplyTableTestHelper.addReply(payload);
+      const reply = (await ReplyTableTestHelper.findReplyById(payload.id))[0];
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
       const data = await replyRepository.getReplyByCommentId(['comment-123']);
       expect(data).toHaveLength(1);
+
+      expect(data[0].id).toEqual(payload.id);
+      expect(data[0].content).toEqual(payload.content);
+      expect(data[0].commentId).toEqual(payload.commentId);
+
+      expect(data[0].username).toEqual(username);
+      expect(data[0].is_delete).toEqual(false);
+
+      expect(data[0].date).toEqual(reply.created_at);
     });
   });
 });

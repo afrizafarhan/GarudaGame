@@ -15,6 +15,7 @@ describe('/threads endpoint', () => {
   });
 
   afterEach(async () => {
+    await ReplyTableTestHelper.cleanTable();
     await ThreadCommentTableTestHelper.cleanTable();
     await ThreadTableTestHelper.cleanTable();
   });
@@ -161,7 +162,13 @@ describe('/threads endpoint', () => {
     });
     it('should response 200 get thread without comment', async () => {
       await UsersTableTestHelper.addUser({ id: 'user-124', username: 'hantu' });
-      await ThreadTableTestHelper.addThread({ userId: userData.addedUser.id });
+      const threadPayload = {
+        id: 'thread-123',
+        title: 'Dicoding',
+        body: 'Dicoding Indonesia',
+        userId: userData.addedUser.id,
+      };
+      await ThreadTableTestHelper.addThread(threadPayload);
       const server = await createServer(container);
       const response = await server.inject({
         method: 'GET',
@@ -178,11 +185,28 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread).toHaveProperty('date');
       expect(responseJson.data.thread).toHaveProperty('username');
       expect(responseJson.data.thread).toHaveProperty('comments');
+
+      expect(responseJson.data.thread.id).toEqual(threadPayload.id);
+      expect(responseJson.data.thread.title).toEqual(threadPayload.title);
+      expect(responseJson.data.thread.body).toEqual(threadPayload.body);
+      expect(responseJson.data.thread.username).toEqual(userData.addedUser.username);
     });
     it('should response 200 get thread with comment', async () => {
       const secondUser = await UsersTableTestHelper.findUsersById('user-124');
-      await ThreadTableTestHelper.addThread({ userId: userData.addedUser.id });
-      await ThreadCommentTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id, threadId: 'thread-123' });
+      const threadPayload = {
+        id: 'thread-123',
+        title: 'Dicoding',
+        body: 'Dicoding Indonesia',
+        userId: userData.addedUser.id,
+      };
+      await ThreadTableTestHelper.addThread(threadPayload);
+      const payload = {
+        id: 'comment-123',
+        content: 'Dicoding',
+        threadId: 'thread-123',
+        userId: secondUser[0].id,
+      };
+      await ThreadCommentTableTestHelper.addThreadComment(payload);
       const server = await createServer(container);
       const response = await server.inject({
         method: 'GET',
@@ -200,17 +224,46 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread).toHaveProperty('date');
       expect(responseJson.data.thread).toHaveProperty('username');
       expect(responseJson.data.thread).toHaveProperty('comments');
+
+      expect(responseJson.data.thread.id).toEqual(threadPayload.id);
+      expect(responseJson.data.thread.title).toEqual(threadPayload.title);
+      expect(responseJson.data.thread.body).toEqual(threadPayload.body);
+      expect(responseJson.data.thread.username).toEqual(userData.addedUser.username);
+
       expect(typeof responseJson.data.thread.comments).toEqual('object');
+      expect(responseJson.data.thread.comments).toHaveLength(1);
       expect(responseJson.data.thread.comments[0]).toHaveProperty('id');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('username');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('date');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('content');
+
+      expect(responseJson.data.thread.comments[0].id).toEqual(payload.id);
+      expect(responseJson.data.thread.comments[0].username).toEqual(secondUser[0].username);
+      expect(responseJson.data.thread.comments[0].content).toEqual(payload.content);
     });
     it('should response 200 get thread with comment and replies', async () => {
       const secondUser = await UsersTableTestHelper.findUsersById('user-124');
-      await ThreadTableTestHelper.addThread({ userId: userData.addedUser.id });
-      await ThreadCommentTableTestHelper.addThreadComment({ id: 'comment-123', userId: secondUser[0].id, threadId: 'thread-123' });
-      await ReplyTableTestHelper.addReply({ userId: userData.addedUser.id, content: 'xixixi', commentId: 'comment-123' });
+      const threadPayload = {
+        id: 'thread-123',
+        title: 'Dicoding',
+        body: 'Dicoding Indonesia',
+        userId: userData.addedUser.id,
+      };
+      await ThreadTableTestHelper.addThread(threadPayload);
+      const commentPayload = {
+        id: 'comment-123',
+        content: 'Dicoding',
+        threadId: 'thread-123',
+        userId: secondUser[0].id,
+      };
+      await ThreadCommentTableTestHelper.addThreadComment(commentPayload);
+      const replyPayload = {
+        id: 'reply-123',
+        content: 'xixixi',
+        commentId: 'comment-123',
+        userId: userData.addedUser.id,
+      };
+      await ReplyTableTestHelper.addReply(replyPayload);
       const server = await createServer(container);
       const response = await server.inject({
         method: 'GET',
@@ -228,6 +281,11 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread).toHaveProperty('date');
       expect(responseJson.data.thread).toHaveProperty('username');
       expect(responseJson.data.thread).toHaveProperty('comments');
+
+      expect(responseJson.data.thread.id).toEqual(threadPayload.id);
+      expect(responseJson.data.thread.title).toEqual(threadPayload.title);
+      expect(responseJson.data.thread.body).toEqual(threadPayload.body);
+      expect(responseJson.data.thread.username).toEqual(userData.addedUser.username);
 
       expect(typeof responseJson.data.thread.comments).toEqual('object');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('id');
@@ -236,11 +294,20 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[0]).toHaveProperty('content');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('replies');
 
+      expect(responseJson.data.thread.comments[0].id).toEqual(commentPayload.id);
+      expect(responseJson.data.thread.comments[0].username).toEqual(secondUser[0].username);
+      expect(responseJson.data.thread.comments[0].content).toEqual(commentPayload.content);
+
       expect(typeof responseJson.data.thread.comments[0].replies).toEqual('object');
       expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('id');
       expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('content');
       expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('date');
       expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('username');
+
+      expect(responseJson.data.thread.comments[0].replies[0].id).toEqual(replyPayload.id);
+      expect(responseJson.data.thread.comments[0].replies[0].content).toEqual(replyPayload.content);
+      expect(responseJson.data.thread.comments[0].replies[0].username)
+        .toEqual(userData.addedUser.username);
     });
   });
 });
