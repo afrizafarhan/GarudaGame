@@ -309,7 +309,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
       expect(response.statusCode).toEqual(403);
       expect(responseJson).toHaveProperty('status');
       expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('kamu tidak punya akses untuk menghapus reply ini');
+      expect(responseJson.message).toEqual('kamu tidak punya akses untuk reply ini');
     });
 
     it('should response 200 delete reply correctly', async () => {

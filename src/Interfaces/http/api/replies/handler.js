@@ -16,7 +16,7 @@ class ReplyHandler {
       content: request.payload.content,
       userId: request.auth.credentials.id,
     };
-    const { id, content, owner } = (await replyUseCase.execute(payload)).rows[0];
+    const { id, content, owner } = await replyUseCase.execute(payload);
     const response = h.response({
       status: 'success',
       data: {

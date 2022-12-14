@@ -76,6 +76,33 @@ describe('ReplyRepositoryPostgres', () => {
     });
   });
 
+  describe('verifyOwnerReplyByIdAndUsertId', () => {
+    it('should throw error when reply not accordance to comment', async () => {
+      await ThreadTableTestHelper.addThread({ userId: 'user-123' });
+      await ThreadCommentsTableTestHelper.addThreadComment({
+        threadId: 'thread-123',
+      });
+      await ReplyTableTestHelper.addReply({
+        userId: 'user-124',
+      });
+      const replyRepository = new ReplyRepositoryPostgres(pool, {});
+      await expect(replyRepository.verifyOwnerReplyByIdAndUserId('reply-123', 'user-123'))
+        .rejects.toThrow(new Error('VERIFY_OWNER_REPLY.ACCESS_FORBIDEN'));
+    });
+    it('should presist get reply by id and comment id', async () => {
+      await ThreadTableTestHelper.addThread({ userId: 'user-123' });
+      await ThreadCommentsTableTestHelper.addThreadComment({
+        threadId: 'thread-123',
+      });
+      await ReplyTableTestHelper.addReply({
+        userId: 'user-124',
+      });
+      const replyRepository = new ReplyRepositoryPostgres(pool, {});
+      await expect(replyRepository.verifyOwnerReplyByIdAndUserId('reply-123', 'user-124'))
+        .resolves.not.toThrow(Error);
+    });
+  });
+
   describe('deleteReplyById', () => {
     it('should persist delete reply by reply id', async () => {
       await ThreadTableTestHelper.addThread({ userId: 'user-123' });

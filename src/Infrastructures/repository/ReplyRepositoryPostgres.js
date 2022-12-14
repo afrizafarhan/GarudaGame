@@ -29,6 +29,17 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     }
   }
 
+  async verifyOwnerReplyByIdAndUserId(replyId, userId) {
+    const query = {
+      text: 'SELECT id FROM thread_comment_replies WHERE id = $1 AND user_id = $2',
+      values: [replyId, userId],
+    };
+    const result = await this.pool.query(query);
+    if (!result.rowCount) {
+      throw new Error('VERIFY_OWNER_REPLY.ACCESS_FORBIDEN');
+    }
+  }
+
   async getReplyByCommentId(commentId) {
     const query = {
       text: 'SELECT r.id, comment_id as "commentId", u.username, r.created_at as date, r.content, r.is_delete FROM thread_comment_replies as r JOIN thread_comments as c ON c.id = r.comment_id JOIN users u ON u.id = r.user_id WHERE comment_id = ANY($1::varchar[]) ORDER BY r.created_at ASC',
