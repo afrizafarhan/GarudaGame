@@ -158,27 +158,27 @@ describe('GetThreadUseCase', () => {
           id: 'reply-123',
           content: 'Dicoding reply',
           date: '2021-08-08T07:22:33.555Z',
-          username: 'Dicoding 1',
+          username: 'dicoding',
         },
         {
           id: 'reply-124',
           content: '**balasan telah dihapus**',
           date: '2021-08-08T07:22:33.555Z',
-          username: 'Dicoding 2',
+          username: 'dicoding2',
         },
       ],
     };
     const expectedSecondCommentResult = {
       id: 'comment-132',
       content: 'dicoding 2',
-      username: 'dicoding 2',
+      username: 'dicoding2',
       date: '2021-08-08T07:22:33.555Z',
       replies: [
         {
           id: 'reply-125',
           content: '**balasan telah dihapus**',
           date: '2021-08-08T07:22:33.555Z',
-          username: 'Dicoding 2',
+          username: 'dicoding2',
         },
       ],
     };
@@ -213,7 +213,7 @@ describe('GetThreadUseCase', () => {
         {
           id: 'comment-132',
           content: 'dicoding 2',
-          username: 'dicoding 2',
+          username: 'dicoding2',
           date: '2021-08-08T07:22:33.555Z',
           is_delete: false,
         },
@@ -223,7 +223,7 @@ describe('GetThreadUseCase', () => {
         {
           id: 'reply-123',
           content: 'Dicoding reply',
-          username: 'Dicoding 1',
+          username: 'dicoding',
           date: '2021-08-08T07:22:33.555Z',
           commentId: 'comment-123',
           is_delete: false,
@@ -231,7 +231,7 @@ describe('GetThreadUseCase', () => {
         {
           id: 'reply-124',
           content: '**balasan telah dihapus**',
-          username: 'Dicoding 2',
+          username: 'dicoding2',
           date: '2021-08-08T07:22:33.555Z',
           commentId: 'comment-123',
           is_delete: true,
@@ -239,7 +239,7 @@ describe('GetThreadUseCase', () => {
         {
           id: 'reply-125',
           content: '**balasan telah dihapus**',
-          username: 'Dicoding 2',
+          username: 'dicoding2',
           date: '2021-08-08T07:22:33.555Z',
           commentId: 'comment-132',
           is_delete: true,
