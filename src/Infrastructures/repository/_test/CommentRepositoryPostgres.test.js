@@ -39,9 +39,9 @@ describe('CommentRepository', () => {
       const comment = await commentRepositoryPostgres.addComment(addComment);
 
       const threadComments = await ThreadCommentsTableTestHelper.findThreadCommentById('comment-123');
-      expect(threadComments).toHaveLength(1);
       expect(comment.content).toEqual(addComment.content);
       expect(comment.owner).toEqual(addComment.userId);
+
       expect(threadComments[0].thread_id).toEqual(addComment.threadId);
       expect(threadComments[0].id).toEqual(`comment-${fakeIdGenerator()}`);
     });
