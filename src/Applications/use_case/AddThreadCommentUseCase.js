@@ -7,10 +7,7 @@ class AddThreadCommentUseCase {
   }
 
   async execute(useCasePayload) {
-    const { rowCount } = await this.threadRepository.getThreadById(useCasePayload.threadId);
-    if (!rowCount) {
-      throw new Error('GET_THREAD.NO_THREAD_FOUND');
-    }
+    await this.threadRepository.getThreadById(useCasePayload.threadId);
     const addComment = new AddComment(useCasePayload);
     return this.commentRepository.addComment(addComment);
   }

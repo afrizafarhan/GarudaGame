@@ -6,15 +6,12 @@ class GetThreadUseCase {
   }
 
   async execute(threadId, withComment = false) {
-    const { rowCount, rows: data } = await this.threadRepository.getThreadById(threadId);
-    if (!rowCount) {
-      throw new Error('GET_THREAD.NO_THREAD_FOUND');
-    }
+    const data = await this.threadRepository.getThreadById(threadId);
     let comments;
     if (withComment) {
       const commentId = [];
       comments = (await this.commentRepository.getCommentByThreadId(threadId))
-        .rows.map((val) => {
+        .map((val) => {
           commentId.push(val.id);
           return {
             id: val.id,
@@ -25,7 +22,7 @@ class GetThreadUseCase {
           };
         });
       (await this.replyRepository.getReplyByCommentId(commentId))
-        .rows.forEach((reply) => {
+        .forEach((reply) => {
           comments.forEach((val) => {
             if (val.id === reply.commentId) {
               val.replies.push({
@@ -49,13 +46,10 @@ class GetThreadUseCase {
         return val;
       });
     }
-    const payload = {
-      ...data[0],
-    };
     if (comments) {
-      payload.comments = comments;
+      data.comments = comments;
     }
-    return payload;
+    return data;
   }
 }
 

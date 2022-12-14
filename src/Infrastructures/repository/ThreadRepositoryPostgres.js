@@ -23,8 +23,23 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       text: 'SELECT t.id, t.title, t.body, t.created_at as date, u.username FROM threads t INNER JOIN users u ON u.id = t.user_id WHERE t.id = $1',
       values: [threadId],
     };
+    const result = await this.pool.query(query);
+    if (!result.rowCount) {
+      throw new Error('GET_THREAD.NO_THREAD_FOUND');
+    }
+    return result.rows[0];
+  }
 
-    return this.pool.query(query);
+  async verifyAvailabilityThreadById(id) {
+    const query = {
+      text: 'SELECT id FROM threads WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this.pool.query(query);
+    if (!result.rowCount) {
+      throw new Error('GET_THREAD.NO_THREAD_FOUND');
+    }
   }
 }
 

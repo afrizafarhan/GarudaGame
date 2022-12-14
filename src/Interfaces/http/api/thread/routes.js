@@ -12,22 +12,6 @@ const routes = (handler) => ([
     path: '/threads/{threadId}',
     handler: handler.getThreadByIdHandler,
   },
-  {
-    method: 'POST',
-    path: '/threads/{threadId}/comments',
-    handler: handler.postThreadCommentHandler,
-    options: {
-      auth: 'jwt_garuda_game',
-    },
-  },
-  {
-    method: 'DELETE',
-    path: '/threads/{threadId}/comments/{commentId}',
-    handler: handler.deleteThreadCommentHandler,
-    options: {
-      auth: 'jwt_garuda_game',
-    },
-  },
 ]);
 
 module.exports = routes;

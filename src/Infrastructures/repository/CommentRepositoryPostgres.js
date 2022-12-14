@@ -19,20 +19,15 @@ class CommentRepositoryPostgres extends CommentRepository {
     return result.rows[0];
   }
 
-  async getCommentById(id) {
-    const query = {
-      text: 'SELECT * FROM thread_comments WHERE id = $1',
-      values: [id],
-    };
-    return this.pool.query(query);
-  }
-
-  async getCommentByIdAndThreadId(commentId, threadId) {
+  async verifyAvailabilityCommentByIdAndThreadId(commentId, threadId) {
     const query = {
       text: 'SELECT * FROM thread_comments WHERE id = $1 AND thread_id = $2',
       values: [commentId, threadId],
     };
-    return this.pool.query(query);
+    const result = await this.pool.query(query);
+    if (!result.rowCount) {
+      throw new Error('GET_THREAD_COMMENT.NO_THREAD_COMMENT_FOUND');
+    }
   }
 
   async getCommentByThreadId(threadId) {
@@ -40,7 +35,8 @@ class CommentRepositoryPostgres extends CommentRepository {
       text: 'SELECT tc.id, content, tc.created_at as date, username, is_delete FROM thread_comments tc JOIN users u ON u.id = tc.user_id WHERE tc.thread_id = $1 ORDER BY created_at ASC',
       values: [threadId],
     };
-    return this.pool.query(query);
+    const result = await this.pool.query(query);
+    return result.rows;
   }
 
   async deleteCommentById(id) {
@@ -48,7 +44,7 @@ class CommentRepositoryPostgres extends CommentRepository {
       text: 'UPDATE thread_comments SET is_delete = true WHERE id = $1 RETURNING id',
       values: [id],
     };
-    return this.pool.query(query);
+    await this.pool.query(query);
   }
 }
 

@@ -8,7 +8,7 @@ describe('GetThreadUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
 
     mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve({ rowCount: 0 }));
+      .mockImplementation(() => Promise.reject(new Error('GET_THREAD.NO_THREAD_FOUND')));
 
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
@@ -28,16 +28,11 @@ describe('GetThreadUseCase', () => {
     };
     mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-        rows: [
-          {
-            id: 'thread-123',
-            title: 'dicoding',
-            body: 'dicoding indonesia',
-            username: 'dicoding',
-            date: '2021-08-08T07:19:09.775Z',
-          },
-        ],
+        id: 'thread-123',
+        title: 'dicoding',
+        body: 'dicoding indonesia',
+        username: 'dicoding',
+        date: '2021-08-08T07:19:09.775Z',
       }));
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
@@ -67,36 +62,28 @@ describe('GetThreadUseCase', () => {
         expectedCommentResult,
       ],
     };
+    mockThreadRepository.verifyAvailabilityThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
     mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-        rows: [
-          {
-            id: 'thread-123',
-            title: 'dicoding',
-            body: 'dicoding indonesia',
-            username: 'dicoding',
-            date: '2021-08-08T07:19:09.775Z',
-          },
-        ],
+        id: 'thread-123',
+        title: 'dicoding',
+        body: 'dicoding indonesia',
+        username: 'dicoding',
+        date: '2021-08-08T07:19:09.775Z',
       }));
     mockCommentRepository.getCommentByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-        rows: [
-          {
-            id: 'comment-123',
-            content: 'dicoding',
-            username: 'dicoding',
-            date: '2021-08-08T07:22:33.555Z',
-          },
-        ],
-      }));
+      .mockImplementation(() => Promise.resolve([
+        {
+          id: 'comment-123',
+          content: 'dicoding',
+          username: 'dicoding',
+          date: '2021-08-08T07:22:33.555Z',
+          is_delete: false,
+        },
+      ]));
     mockReplyRepository.getReplyByCommentId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 0,
-        rows: [],
-      }));
+      .mockImplementation(() => Promise.resolve([]));
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
@@ -129,35 +116,24 @@ describe('GetThreadUseCase', () => {
     };
     mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-        rows: [
-          {
-            id: 'thread-123',
-            title: 'dicoding',
-            body: 'dicoding indonesia',
-            username: 'dicoding',
-            date: '2021-08-08T07:19:09.775Z',
-          },
-        ],
+        id: 'thread-123',
+        title: 'dicoding',
+        body: 'dicoding indonesia',
+        username: 'dicoding',
+        date: '2021-08-08T07:19:09.775Z',
       }));
     mockCommentRepository.getCommentByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-        rows: [
-          {
-            id: 'comment-123',
-            content: '**komentar telah dihapus**',
-            username: 'dicoding',
-            date: '2021-08-08T07:22:33.555Z',
-            is_delete: true,
-          },
-        ],
-      }));
+      .mockImplementation(() => Promise.resolve([
+        {
+          id: 'comment-123',
+          content: '**komentar telah dihapus**',
+          username: 'dicoding',
+          date: '2021-08-08T07:22:33.555Z',
+          is_delete: true,
+        },
+      ]));
     mockReplyRepository.getReplyByCommentId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 0,
-        rows: [],
-      }));
+      .mockImplementation(() => Promise.resolve([]));
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
@@ -192,6 +168,20 @@ describe('GetThreadUseCase', () => {
         },
       ],
     };
+    const expectedSecondCommentResult = {
+      id: 'comment-132',
+      content: 'dicoding 2',
+      username: 'dicoding 2',
+      date: '2021-08-08T07:22:33.555Z',
+      replies: [
+        {
+          id: 'reply-125',
+          content: '**balasan telah dihapus**',
+          date: '2021-08-08T07:22:33.555Z',
+          username: 'Dicoding 2',
+        },
+      ],
+    };
     const expectedResult = {
       id: 'thread-123',
       title: 'dicoding',
@@ -200,63 +190,61 @@ describe('GetThreadUseCase', () => {
       date: '2021-08-08T07:19:09.775Z',
       comments: [
         expectedCommentResult,
+        expectedSecondCommentResult,
       ],
     };
     mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-        rows: [
-          {
-            id: 'thread-123',
-            title: 'dicoding',
-            body: 'dicoding indonesia',
-            username: 'dicoding',
-            date: '2021-08-08T07:19:09.775Z',
-          },
-        ],
+        id: 'thread-123',
+        title: 'dicoding',
+        body: 'dicoding indonesia',
+        username: 'dicoding',
+        date: '2021-08-08T07:19:09.775Z',
       }));
     mockCommentRepository.getCommentByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 1,
-        rows: [
-          {
-            id: 'comment-123',
-            content: 'dicoding',
-            username: 'dicoding',
-            date: '2021-08-08T07:22:33.555Z',
-          },
-        ],
-      }));
+      .mockImplementation(() => Promise.resolve([
+        {
+          id: 'comment-123',
+          content: 'dicoding',
+          username: 'dicoding',
+          date: '2021-08-08T07:22:33.555Z',
+          is_delete: false,
+        },
+        {
+          id: 'comment-132',
+          content: 'dicoding 2',
+          username: 'dicoding 2',
+          date: '2021-08-08T07:22:33.555Z',
+          is_delete: false,
+        },
+      ]));
     mockReplyRepository.getReplyByCommentId = jest.fn()
-      .mockImplementation(() => Promise.resolve({
-        rowCount: 2,
-        rows: [
-          {
-            id: 'reply-123',
-            content: 'Dicoding reply',
-            username: 'Dicoding 1',
-            date: '2021-08-08T07:22:33.555Z',
-            commentId: 'comment-123',
-            is_delete: false,
-          },
-          {
-            id: 'reply-124',
-            content: '**balasan telah dihapus**',
-            username: 'Dicoding 2',
-            date: '2021-08-08T07:22:33.555Z',
-            commentId: 'comment-123',
-            is_delete: true,
-          },
-          {
-            id: 'reply-125',
-            content: '**balasan telah dihapus**',
-            username: 'Dicoding 2',
-            date: '2021-08-08T07:22:33.555Z',
-            commentId: 'comment-132',
-            is_delete: true,
-          },
-        ],
-      }));
+      .mockImplementation(() => Promise.resolve([
+        {
+          id: 'reply-123',
+          content: 'Dicoding reply',
+          username: 'Dicoding 1',
+          date: '2021-08-08T07:22:33.555Z',
+          commentId: 'comment-123',
+          is_delete: false,
+        },
+        {
+          id: 'reply-124',
+          content: '**balasan telah dihapus**',
+          username: 'Dicoding 2',
+          date: '2021-08-08T07:22:33.555Z',
+          commentId: 'comment-123',
+          is_delete: true,
+        },
+        {
+          id: 'reply-125',
+          content: '**balasan telah dihapus**',
+          username: 'Dicoding 2',
+          date: '2021-08-08T07:22:33.555Z',
+          commentId: 'comment-132',
+          is_delete: true,
+        },
+      ]));
     const getThreadUseCase = new GetThreadUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
