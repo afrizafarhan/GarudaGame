@@ -52,18 +52,16 @@ describe('ThreadRepositoryPostgres', () => {
         title: 'Dicoding',
         body: 'Dicoding Indonesia',
         userId,
+        date: new Date().toISOString(),
       };
       await ThreadTableTestHelper
         .addThread(payload);
-      const {
-        created_at: date,
-      } = await ThreadTableTestHelper.findThreadById('thread-123');
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
       const data = await threadRepositoryPostgres.getThreadById('thread-123');
       expect(data.id).toEqual(payload.id);
       expect(data.title).toEqual(payload.title);
       expect(data.body).toEqual(payload.body);
-      expect(data.date).toEqual(date);
+      expect(data.date).toEqual(payload.date);
       expect(data.username).toEqual(username);
     });
   });

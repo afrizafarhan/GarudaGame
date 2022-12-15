@@ -57,16 +57,16 @@ describe('CommentRepository', () => {
         content: 'Dicoding',
         threadId: 'thread-123',
         userId: secondUser[0].id,
+        date: new Date().toISOString(),
       };
       await ThreadTableTestHelper.addThread({ userId: user[0].id });
       await ThreadCommentsTableTestHelper.addThreadComment(payload);
-      const getComment = (await ThreadCommentsTableTestHelper.findThreadCommentById('comment-123'))[0];
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
       const data = await commentRepositoryPostgres.getCommentByThreadId('thread-123');
       expect(data).toHaveLength(1);
       expect(data[0].id).toEqual(payload.id);
       expect(data[0].content).toEqual(payload.content);
-      expect(data[0].date).toEqual(getComment.created_at);
+      expect(data[0].date).toEqual(payload.date);
       expect(data[0].username).toEqual(secondUser[0].username);
       expect(data[0].is_delete).toEqual(false);
     });

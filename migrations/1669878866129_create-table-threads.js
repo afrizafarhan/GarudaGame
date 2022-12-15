@@ -18,14 +18,12 @@ exports.up = (pgm) => {
       notNull: true,
     },
     created_at: {
-      type: 'TIMESTAMP',
+      type: 'TEXT',
       notNull: true,
-      default: pgm.func('current_timestamp'),
     },
     updated_at: {
-      type: 'TIMESTAMP',
+      type: 'TEXT',
       notNull: true,
-      default: pgm.func('current_timestamp'),
     },
   });
   pgm.addConstraint('threads', 'fk_threads.user_id.users.id', 'FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE');

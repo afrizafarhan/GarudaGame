@@ -167,6 +167,7 @@ describe('/threads endpoint', () => {
         title: 'Dicoding',
         body: 'Dicoding Indonesia',
         userId: userData.addedUser.id,
+        date: new Date().toISOString(),
       };
       await ThreadTableTestHelper.addThread(threadPayload);
       const server = await createServer(container);
@@ -189,15 +190,18 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.id).toEqual(threadPayload.id);
       expect(responseJson.data.thread.title).toEqual(threadPayload.title);
       expect(responseJson.data.thread.body).toEqual(threadPayload.body);
+      expect(responseJson.data.thread.date).toEqual(threadPayload.date);
       expect(responseJson.data.thread.username).toEqual(userData.addedUser.username);
     });
     it('should response 200 get thread with comment', async () => {
       const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      const date = new Date().toISOString();
       const threadPayload = {
         id: 'thread-123',
         title: 'Dicoding',
         body: 'Dicoding Indonesia',
         userId: userData.addedUser.id,
+        date,
       };
       await ThreadTableTestHelper.addThread(threadPayload);
       const payload = {
@@ -205,6 +209,7 @@ describe('/threads endpoint', () => {
         content: 'Dicoding',
         threadId: 'thread-123',
         userId: secondUser[0].id,
+        date,
       };
       await ThreadCommentTableTestHelper.addThreadComment(payload);
       const server = await createServer(container);
@@ -228,6 +233,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.id).toEqual(threadPayload.id);
       expect(responseJson.data.thread.title).toEqual(threadPayload.title);
       expect(responseJson.data.thread.body).toEqual(threadPayload.body);
+      expect(responseJson.data.thread.date).toEqual(threadPayload.date);
       expect(responseJson.data.thread.username).toEqual(userData.addedUser.username);
 
       expect(typeof responseJson.data.thread.comments).toEqual('object');
@@ -240,14 +246,17 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[0].id).toEqual(payload.id);
       expect(responseJson.data.thread.comments[0].username).toEqual(secondUser[0].username);
       expect(responseJson.data.thread.comments[0].content).toEqual(payload.content);
+      expect(responseJson.data.thread.comments[0].date).toEqual(payload.date);
     });
     it('should response 200 get thread with comment and replies', async () => {
       const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      const date = new Date().toISOString();
       const threadPayload = {
         id: 'thread-123',
         title: 'Dicoding',
         body: 'Dicoding Indonesia',
         userId: userData.addedUser.id,
+        date,
       };
       await ThreadTableTestHelper.addThread(threadPayload);
       const commentPayload = {
@@ -255,6 +264,7 @@ describe('/threads endpoint', () => {
         content: 'Dicoding',
         threadId: 'thread-123',
         userId: secondUser[0].id,
+        date,
       };
       await ThreadCommentTableTestHelper.addThreadComment(commentPayload);
       const replyPayload = {
@@ -262,6 +272,7 @@ describe('/threads endpoint', () => {
         content: 'xixixi',
         commentId: 'comment-123',
         userId: userData.addedUser.id,
+        date,
       };
       await ReplyTableTestHelper.addReply(replyPayload);
       const server = await createServer(container);
@@ -285,6 +296,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.id).toEqual(threadPayload.id);
       expect(responseJson.data.thread.title).toEqual(threadPayload.title);
       expect(responseJson.data.thread.body).toEqual(threadPayload.body);
+      expect(responseJson.data.thread.date).toEqual(threadPayload.date);
       expect(responseJson.data.thread.username).toEqual(userData.addedUser.username);
 
       expect(typeof responseJson.data.thread.comments).toEqual('object');
@@ -297,6 +309,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[0].id).toEqual(commentPayload.id);
       expect(responseJson.data.thread.comments[0].username).toEqual(secondUser[0].username);
       expect(responseJson.data.thread.comments[0].content).toEqual(commentPayload.content);
+      expect(responseJson.data.thread.comments[0].date).toEqual(commentPayload.date);
 
       expect(typeof responseJson.data.thread.comments[0].replies).toEqual('object');
       expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('id');
@@ -306,6 +319,7 @@ describe('/threads endpoint', () => {
 
       expect(responseJson.data.thread.comments[0].replies[0].id).toEqual(replyPayload.id);
       expect(responseJson.data.thread.comments[0].replies[0].content).toEqual(replyPayload.content);
+      expect(responseJson.data.thread.comments[0].replies[0].date).toEqual(replyPayload.date);
       expect(responseJson.data.thread.comments[0].replies[0].username)
         .toEqual(userData.addedUser.username);
     });

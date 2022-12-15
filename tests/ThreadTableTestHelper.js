@@ -8,10 +8,11 @@ const ThreadTableTestHelper = {
     title = 'Dicoding',
     body = 'Dicoding Indonesia',
     userId = 'user-123',
+    date = new Date().toISOString(),
   }) {
     const query = {
-      text: 'INSERT INTO threads VALUES($1, $2, $3, $4)',
-      values: [id, title, body, userId],
+      text: 'INSERT INTO threads VALUES($1, $2, $3, $4, $5, $6)',
+      values: [id, title, body, userId, date, date],
     };
 
     await pool.query(query);

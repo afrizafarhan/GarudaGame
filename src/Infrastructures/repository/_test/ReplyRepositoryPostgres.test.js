@@ -131,9 +131,9 @@ describe('ReplyRepositoryPostgres', () => {
         content: 'Dicoding',
         commentId: 'comment-123',
         userId: id,
+        date: new Date().toISOString(),
       };
       await ReplyTableTestHelper.addReply(payload);
-      const reply = (await ReplyTableTestHelper.findReplyById(payload.id))[0];
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
       const data = await replyRepository.getReplyByCommentId(['comment-123']);
       expect(data).toHaveLength(1);
@@ -144,8 +144,7 @@ describe('ReplyRepositoryPostgres', () => {
 
       expect(data[0].username).toEqual(username);
       expect(data[0].is_delete).toEqual(false);
-
-      expect(data[0].date).toEqual(reply.created_at);
+      expect(data[0].date).toEqual(payload.date);
     });
   });
 });
