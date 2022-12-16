@@ -38,8 +38,8 @@ jobs:
           npm run test
         env:
           CI: true
-          PGHOST: ${{ secrets.PGHOST_TEST }}
-          PGHOST_TEST: ${{ secrets.PGHOST_TEST }}
+          PGHOST: postgres
+          PGHOST_TEST: postgres
           PGUSER: ${{ secrets.PGUSER_TEST }}
           PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
           PGPASSWORD: ${{ secrets.PGPASSWORD_TEST }}
