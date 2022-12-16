@@ -41,7 +41,7 @@ jobs:
         env:
           CI: true
           PGHOST: localhost
-          PGHOST_TEST: locahost
+          PGHOST_TEST: localhost
           PGUSER: ${{ secrets.PGUSER_TEST }}
           PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
           PGPASSWORD: ${{ secrets.PGPASSWORD_TEST }}
