@@ -7,4 +7,5 @@ const container = require('./Infrastructures/container');
   await server.start();
   // eslint-disable-next-line no-console
   console.info(`server start at ${server.info.uri}`);
+  console.log('dicoding test');
 })();
