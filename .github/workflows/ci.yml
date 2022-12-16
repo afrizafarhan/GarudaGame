@@ -19,6 +19,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        maps:
+          - 5432:5432
     
     strategy:
       matrix:
@@ -37,15 +39,15 @@ jobs:
           npm run test
         env:
           CI: true
-          PGHOST: postgres
-          PGHOST_TEST: postgres
+          PGHOST: localhost
+          PGHOST_TEST: locahost
           PGUSER: ${{ secrets.PGUSER_TEST }}
           PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
           PGPASSWORD: ${{ secrets.PGPASSWORD_TEST }}
           PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
           PGDATABASE: ${{ secrets.PGDATABASE_TEST }}
           PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
-          PGPORT: ${{ secrets.PGPORT }}
-          PGPORT_TEST: ${{ secrets.PGPORT }}
+          PGPORT: 5432
+          PGPORT_TEST: 5432
           ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
           REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
