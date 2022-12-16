@@ -34,7 +34,19 @@ jobs:
       - name: npm install migrate and test
         run: |
           npm install
+          npm run migrate:test up
+          npm run test
         env:
           CI: true
           PGHOST: ${{ secrets.PGHOST_TEST }}
+          PGHOST_TEST: ${{ secrets.PGHOST_TEST }}
+          PGUSER: ${{ secrets.PGUSER_TEST }}
+          PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD_TEST }}
+          PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
+          PGDATABASE: ${{ secrets.PGDATABASE_TEST }}
+          PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
           PGPORT: ${{ secrets.PGPORT }}
+          PGPORT_TEST: ${{ secrets.PGPORT_TEST }}
+          ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
+          REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
