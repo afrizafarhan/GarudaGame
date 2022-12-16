@@ -33,7 +33,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async getCommentByThreadId(threadId) {
     const query = {
-      text: 'SELECT tc.id, content, tc.created_at as date, username, is_delete FROM thread_comments tc JOIN users u ON u.id = tc.user_id WHERE tc.thread_id = $1 ORDER BY created_at ASC',
+      text: 'SELECT tc.id, content, tc.created_at as date, username, is_delete, tc.likes as "likeCount" FROM thread_comments tc JOIN users u ON u.id = tc.user_id WHERE tc.thread_id = $1 ORDER BY created_at ASC',
       values: [threadId],
     };
     const result = await this.pool.query(query);
@@ -57,6 +57,22 @@ class CommentRepositoryPostgres extends CommentRepository {
     if (!result.rowCount) {
       throw new Error('VERIFY_COMMENT_OWNER.ACCESS_FORBIDEN');
     }
+  }
+
+  async incrementLikeCommentById(commentId) {
+    const query = {
+      text: 'UPDATE thread_comments SET likes = likes + 1 WHERE id = $1',
+      values: [commentId],
+    };
+    await this.pool.query(query);
+  }
+
+  async decrementLikeCommentById(commentId) {
+    const query = {
+      text: 'UPDATE thread_comments SET likes = likes - 1 WHERE id = $1',
+      values: [commentId],
+    };
+    await this.pool.query(query);
   }
 }
 

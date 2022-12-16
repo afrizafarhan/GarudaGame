@@ -44,7 +44,6 @@ describe('CommentRepository', () => {
       expect(comment.owner).toEqual(addComment.userId);
 
       expect(threadComments[0].thread_id).toEqual(addComment.threadId);
-      expect(threadComments[0].id).toEqual(`comment-${fakeIdGenerator()}`);
     });
   });
 
@@ -58,6 +57,7 @@ describe('CommentRepository', () => {
         threadId: 'thread-123',
         userId: secondUser[0].id,
         date: new Date().toISOString(),
+        likes: 0,
       };
       await ThreadTableTestHelper.addThread({ userId: user[0].id });
       await ThreadCommentsTableTestHelper.addThreadComment(payload);
@@ -68,6 +68,7 @@ describe('CommentRepository', () => {
       expect(data[0].content).toEqual(payload.content);
       expect(data[0].date).toEqual(payload.date);
       expect(data[0].username).toEqual(secondUser[0].username);
+      expect(data[0].likeCount).toEqual(payload.likes);
       expect(data[0].is_delete).toEqual(false);
     });
   });
@@ -124,6 +125,50 @@ describe('CommentRepository', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
       await expect(commentRepositoryPostgres.verifyOwnerCommentByIdAndUserId('comment-123', secondUser[0].id))
         .resolves.not.toThrowError('VERIFY_COMMENT_OWNER.ACCESS_FORBIDEN');
+    });
+  });
+
+  describe('incrementLikeCommentById function', () => {
+    it('should persist increment like correctly', async () => {
+      const user = await UsersTableTestHelper.findUsersById('user-123');
+      const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      await ThreadTableTestHelper.addThread({ userId: user[0].id });
+      const payload = {
+        id: 'comment-123',
+        content: 'Dicoding',
+        threadId: 'thread-123',
+        userId: secondUser[0].id,
+        date: new Date().toISOString(),
+        likes: 0,
+      };
+      await ThreadCommentsTableTestHelper.addThreadComment(payload);
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+      await commentRepositoryPostgres.incrementLikeCommentById(payload.id);
+      const threadComment = await ThreadCommentsTableTestHelper.findThreadCommentById('comment-123');
+      expect(threadComment[0].likes).toEqual(1);
+      expect(threadComment[0].likes).not.toEqual(payload.likes);
+    });
+  });
+
+  describe('decrementLikeCommentById function', () => {
+    it('should persist decrement like correctly', async () => {
+      const user = await UsersTableTestHelper.findUsersById('user-123');
+      const secondUser = await UsersTableTestHelper.findUsersById('user-124');
+      await ThreadTableTestHelper.addThread({ userId: user[0].id });
+      const payload = {
+        id: 'comment-123',
+        content: 'Dicoding',
+        threadId: 'thread-123',
+        userId: secondUser[0].id,
+        date: new Date().toISOString(),
+        likes: 3,
+      };
+      await ThreadCommentsTableTestHelper.addThreadComment(payload);
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+      await commentRepositoryPostgres.decrementLikeCommentById(payload.id);
+      const threadComment = await ThreadCommentsTableTestHelper.findThreadCommentById('comment-123');
+      expect(threadComment[0].likes).toEqual(2);
+      expect(threadComment[0].likes).not.toEqual(payload.likes);
     });
   });
 });

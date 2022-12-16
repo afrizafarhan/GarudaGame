@@ -9,10 +9,11 @@ const ThreadCommentsTableTestHelper = {
     threadId = 'thread-123',
     userId = 'user-123',
     date = new Date().toISOString(),
+    likes = 0,
   }) {
     const query = {
-      text: 'INSERT INTO thread_comments(id, content, thread_id, user_id, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6)',
-      values: [id, content, threadId, userId, date, date],
+      text: 'INSERT INTO thread_comments(id, content, thread_id, user_id, created_at, updated_at, likes) VALUES($1, $2, $3, $4, $5, $6, $7)',
+      values: [id, content, threadId, userId, date, date, likes],
     };
     await pool.query(query);
   },

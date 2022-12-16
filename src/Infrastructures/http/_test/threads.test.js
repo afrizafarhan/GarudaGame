@@ -210,6 +210,7 @@ describe('/threads endpoint', () => {
         threadId: 'thread-123',
         userId: secondUser[0].id,
         date,
+        likes: 0,
       };
       await ThreadCommentTableTestHelper.addThreadComment(payload);
       const server = await createServer(container);
@@ -242,11 +243,13 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[0]).toHaveProperty('username');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('date');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('content');
+      expect(responseJson.data.thread.comments[0]).toHaveProperty('likeCount');
 
       expect(responseJson.data.thread.comments[0].id).toEqual(payload.id);
       expect(responseJson.data.thread.comments[0].username).toEqual(secondUser[0].username);
       expect(responseJson.data.thread.comments[0].content).toEqual(payload.content);
       expect(responseJson.data.thread.comments[0].date).toEqual(payload.date);
+      expect(responseJson.data.thread.comments[0].likeCount).toEqual(payload.likes);
     });
     it('should response 200 get thread with comment and replies', async () => {
       const secondUser = await UsersTableTestHelper.findUsersById('user-124');
@@ -265,6 +268,7 @@ describe('/threads endpoint', () => {
         threadId: 'thread-123',
         userId: secondUser[0].id,
         date,
+        likes: 0,
       };
       await ThreadCommentTableTestHelper.addThreadComment(commentPayload);
       const replyPayload = {
@@ -305,11 +309,13 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[0]).toHaveProperty('date');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('content');
       expect(responseJson.data.thread.comments[0]).toHaveProperty('replies');
+      expect(responseJson.data.thread.comments[0]).toHaveProperty('likeCount');
 
       expect(responseJson.data.thread.comments[0].id).toEqual(commentPayload.id);
       expect(responseJson.data.thread.comments[0].username).toEqual(secondUser[0].username);
       expect(responseJson.data.thread.comments[0].content).toEqual(commentPayload.content);
       expect(responseJson.data.thread.comments[0].date).toEqual(commentPayload.date);
+      expect(responseJson.data.thread.comments[0].likeCount).toEqual(commentPayload.likes);
 
       expect(typeof responseJson.data.thread.comments[0].replies).toEqual('object');
       expect(responseJson.data.thread.comments[0].replies[0]).toHaveProperty('id');
