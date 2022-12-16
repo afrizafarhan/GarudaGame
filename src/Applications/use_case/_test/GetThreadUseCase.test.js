@@ -51,6 +51,7 @@ describe('GetThreadUseCase', () => {
       content: 'dicoding',
       username: 'dicoding',
       date: '2021-08-08T07:22:33.555Z',
+      likeCount: 0,
     };
     const expectedResult = {
       id: 'thread-123',
@@ -80,6 +81,7 @@ describe('GetThreadUseCase', () => {
           username: 'dicoding',
           date: '2021-08-08T07:22:33.555Z',
           is_delete: false,
+          likeCount: 0,
         },
       ]));
     mockReplyRepository.getReplyByCommentId = jest.fn()
@@ -103,6 +105,7 @@ describe('GetThreadUseCase', () => {
       content: '**komentar telah dihapus**',
       username: 'dicoding',
       date: '2021-08-08T07:22:33.555Z',
+      likeCount: 0,
     };
     const expectedResult = {
       id: 'thread-123',
@@ -130,6 +133,7 @@ describe('GetThreadUseCase', () => {
           username: 'dicoding',
           date: '2021-08-08T07:22:33.555Z',
           is_delete: true,
+          likeCount: 0,
         },
       ]));
     mockReplyRepository.getReplyByCommentId = jest.fn()
@@ -167,6 +171,7 @@ describe('GetThreadUseCase', () => {
           username: 'dicoding2',
         },
       ],
+      likeCount: 0,
     };
     const expectedSecondCommentResult = {
       id: 'comment-132',
@@ -181,6 +186,7 @@ describe('GetThreadUseCase', () => {
           username: 'dicoding2',
         },
       ],
+      likeCount: 0,
     };
     const expectedResult = {
       id: 'thread-123',
@@ -209,6 +215,7 @@ describe('GetThreadUseCase', () => {
           username: 'dicoding',
           date: '2021-08-08T07:22:33.555Z',
           is_delete: false,
+          likeCount: 0,
         },
         {
           id: 'comment-132',
@@ -216,6 +223,7 @@ describe('GetThreadUseCase', () => {
           username: 'dicoding2',
           date: '2021-08-08T07:22:33.555Z',
           is_delete: false,
+          likeCount: 0,
         },
       ]));
     mockReplyRepository.getReplyByCommentId = jest.fn()

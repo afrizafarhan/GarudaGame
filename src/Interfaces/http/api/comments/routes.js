@@ -15,6 +15,14 @@ const routes = (handler) => ([
       auth: 'jwt_garuda_game',
     },
   },
+  {
+    method: 'PUT',
+    path: '/threads/{threadId}/comments/{commentId}/likes',
+    handler: handler.likeDislikeCommentHandler,
+    options: {
+      auth: 'jwt_garuda_game',
+    },
+  },
 ]);
 
 module.exports = routes;

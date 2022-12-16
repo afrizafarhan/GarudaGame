@@ -19,6 +19,7 @@ class GetThreadUseCase {
             date: val.date,
             content: val.is_delete ? '**komentar telah dihapus**' : val.content,
             replies: [],
+            likeCount: val.likeCount,
           };
         });
       (await this.replyRepository.getReplyByCommentId(commentId))
@@ -41,6 +42,7 @@ class GetThreadUseCase {
             username: val.username,
             date: val.date,
             content: val.content,
+            likeCount: val.likeCount,
           };
         }
         return val;

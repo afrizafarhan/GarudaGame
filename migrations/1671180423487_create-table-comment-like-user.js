@@ -13,6 +13,17 @@ exports.up = (pgm) => {
       notNull: true,
     },
   });
+  pgm.addConstraint(
+    'comment_like_users',
+    'fk_comment_like_users.comment_id.thread_comments.id',
+    'FOREIGN KEY(comment_id) REFERENCES thread_comments(id) ON DELETE CASCADE',
+  );
+
+  pgm.addConstraint(
+    'comment_like_users',
+    'fk_comment_like_users.user_id.users.id',
+    'FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE',
+  );
 };
 
 exports.down = (pgm) => {

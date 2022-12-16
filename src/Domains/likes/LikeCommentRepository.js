@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable class-methods-use-this */
 
-class LikeRepository {
+class LikeCommentRepository {
   async addUserLikeComment(commentId, userId) {
     throw new Error('LIKE_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
@@ -15,4 +15,4 @@ class LikeRepository {
   }
 }
 
-module.exports = LikeRepository;
+module.exports = LikeCommentRepository;
