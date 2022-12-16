@@ -13,8 +13,8 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: ${{ secrets.PGUSER_TEST }}
-          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD_TEST }}
+          PGUSER: ${{ secrets.PGUSER_TEST }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD_TEST }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
